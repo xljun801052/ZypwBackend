@@ -85,6 +85,7 @@ A Promise for My Baby--author:xlys
 > > > > ①基本的全局异常处理  
 > > > > ②全局共用工具类  
 > > > > ③全局共用实体类   
+***
 
 ### 模块设计介绍:
 ##### COMMUNICATE MODULE:
