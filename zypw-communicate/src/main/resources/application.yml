@@ -1,0 +1,6 @@
+server:
+  port: 12021
+spring:
+  application:
+    name: communicate-service-1
+

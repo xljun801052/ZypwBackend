@@ -1,0 +1,17 @@
+### 001-NoClassDefFoundError: org/springframework/boot/context/properties/ConfigurationBeanFactoryMetadata
+#### ***原因：***
+    springboot版本和springcloud版本不兼容。一般框架搭建完成后，启动项目报错，诸如：类找不到，某个依赖包里面的方法执行出错等等。  
+    第一时间考虑配置是不是有问题！如果配置没问题，一般可能是版本冲突！参考资料后修改版本。
+#### ***解决：***
+<u>https://blog.csdn.net/qq32933432/article/details/89375630</u> 
+ 
+|  Spring Cloud  |  Spring Boot  |SpringCloud Alibaba|
+|:----:|:----|:----|
+|Angel版本|兼容Spring Boot 1.2.x|    
+|Brixton版本|兼容Spring Boot 1.3.x，也兼容Spring Boot 1.4.x |  
+|Camden版本|兼容Spring Boot 1.4.x，也兼容Spring Boot 1.5.x |                
+|Dalston版本、Edgware版本|兼容Spring Boot 1.5.x，不兼容Spring Boot 2.0.x|0.1.1|
+|Finchley版本|兼容Spring Boot 2.0.x，不兼容Spring Boot 1.5.x|0.2.1|
+|Greenwich版本|兼容Spring Boot 2.1.x|0.2.2(还没有RELEASE)|
+|Hoxtonl版本|兼容Spring Boot 2.2.x|
+     

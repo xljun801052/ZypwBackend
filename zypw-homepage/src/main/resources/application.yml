@@ -1,0 +1,11 @@
+server:
+  port: 12020
+spring:
+  application:
+    name: homepage-service
+  cloud:
+    nacos:
+      # 服务注册发现中心
+      discovery:
+        server-addr: 127.0.0.1:12018
+
