@@ -25,7 +25,6 @@
     </modules>
     <properties>
         <java.version>1.8</java.version>
-git
         <!--2020.0.0-RC1版本太高了，阿里云仓库里面没有-->
         <!--<spring-cloud.version>2020.0.0-RC1</spring-cloud.version>-->
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
