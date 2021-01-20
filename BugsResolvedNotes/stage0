@@ -14,4 +14,13 @@
 |Finchley版本|兼容Spring Boot 2.0.x，不兼容Spring Boot 1.5.x|0.2.1|
 |Greenwich版本|兼容Spring Boot 2.1.x|0.2.2(还没有RELEASE)|
 |Hoxtonl版本|兼容Spring Boot 2.2.x|
-     
+
+
+### 002-Fastjson转换Object为json类型时，对于值为null的会在转换时省略对应的key-value，如何不省略，使用其他值例如0,""来代替？
+#### ***解决：***
+<u>https://blog.csdn.net/github_39557053/article/details/86609985</u>
+
+### 003-数据库对应记录字段值不为空，但是mybatis查出来字段值却是null？
+#### ***解决：***
+这里的问题是对应字段有下划线，而mybatis没有配置驼峰匹配
+<u>https://www.pianshen.com/article/31271358512/</u>

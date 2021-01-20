@@ -17,4 +17,7 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: com.xlys.zypwhomepage.domain
+#  开启驼峰匹配，否则一些带有下划线字段的值做resultMap映射时值为null
+  configuration:
+    map-underscore-to-camel-case: true
 
