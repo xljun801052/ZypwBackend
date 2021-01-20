@@ -30,6 +30,7 @@
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
         <!--Nacos版本要与Springboot版本兼容，可参考官网-->
         <latest.version>2.1.0.RELEASE</latest.version>
+        <jupitertest.version>5.7.0</jupitertest.version>
 
     </properties>
 
@@ -95,6 +96,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--Nacos配置中心和服务注册中心-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -104,6 +106,12 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>${latest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${jupitertest.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
