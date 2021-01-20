@@ -1,11 +1,4 @@
-server:
-  port: 12020
 spring:
-  application:
-    name: homepage-service
-  cloud:
-    nacos:
-      # 服务注册发现中心
-      discovery:
-        server-addr: 127.0.0.1:12018
-
+  profiles:
+#    Spring Boot中多环境配置文件名需要满足application-{profile}.yml的格式
+    active: dev

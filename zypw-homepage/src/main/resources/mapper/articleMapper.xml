@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlys.zypwhomepage.mapper.ArticleMapper">
+
+    <resultMap id="article" type="com.xlys.zypwhomepage.domain.Article">
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="read_times" jdbcType="INTEGER" property="readTimes" />
+        <result column="collect_times" jdbcType="INTEGER" property="collectTimes" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+    </resultMap>
+
+    <select id="getArticleDetailInfoById" resultType="com.xlys.zypwhomepage.domain.Article">
+        select * from t_homepage_article where id = #{id}
+    </select>
+
+    <!--查询所有文章数据-->
+    <select id="getAllArticleDetail" resultType="com.xlys.zypwhomepage.domain.Article">
+        select * from t_homepage_article where 1=1
+    </select>
+
+</mapper>

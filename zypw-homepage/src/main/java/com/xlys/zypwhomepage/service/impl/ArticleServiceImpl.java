@@ -6,6 +6,8 @@ import com.xlys.zypwhomepage.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
@@ -16,5 +18,11 @@ public class ArticleServiceImpl implements ArticleService {
     public Article getArticleDetailInfoById(Integer id) {
         Article article = articleMapper.getArticleDetailInfoById(id);
         return article;
+    }
+
+    @Override
+    public List<Article> getAllArticleDetail() {
+        List<Article> articleList = articleMapper.getAllArticleDetail();
+        return articleList;
     }
 }
