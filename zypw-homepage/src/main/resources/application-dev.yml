@@ -3,11 +3,11 @@ server:
 spring:
   application:
     name: homepage-service
-#  cloud:
-#    nacos:
-#      # 服务注册发现中心
-#      discovery:
-#        server-addr: 127.0.0.1:12018
+  cloud:
+    nacos:
+      # 服务注册发现中心
+      discovery:
+        server-addr: 127.0.0.1:8848
   datasource:
     username: root
     password: 123789Xlys!@#$

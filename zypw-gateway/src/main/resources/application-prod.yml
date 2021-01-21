@@ -1,0 +1,7 @@
+server:
+  port: 12019
+spring:
+  application:
+    name: gateway-service
+
+

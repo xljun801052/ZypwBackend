@@ -1,0 +1,46 @@
+server:
+  port: 12019
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    # 注册服务【如果不用配置中心的话，不要引入nacos-config依赖包,否则启动报错】
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    # 配置gateway网关：https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/
+    # 参考文档：https://blog.csdn.net/weixin_44141495/article/details/110160186
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          # 设置serviceId大小，默认大写
+          lower-case-service-id: true
+      routes:
+        - id: homepage-server
+          # lb表示从注册中心获取服务
+          uri: lb://homepage-service
+          predicates:
+          # 如果请求地址满足/homepage/**,则将请求转发到homepage-service服务
+          - Path=/homepage/**
+          # - Cookie=mycookie,mycookievalue # 暂时不用对cookie进行校验
+          filters:
+          # 去除原请求地址中从左往右的n级路径【n为StripPrefix配置的value值】
+          - StripPrefix=1
+          # 熔断降级过滤器回调处理配置
+          - name: Hystrix
+            args:
+              name: homepage-fallback
+              fallbackUri: forward:/homepage_fallback
+        - id: onlinemarket-server
+          uri: lb://onlinemarket-service
+          predicates:
+          - Path=/onlinemarket/**
+          filters:
+          - StripPrefix=1
+          - name: Hystrix
+            args:
+              name: onlinemarket-fallback
+              fallbackUri: forward:/onlinemarket_fallback
+
+
