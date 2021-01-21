@@ -24,7 +24,7 @@ public class JWTUtils {
     /**
      * 生成jwt
      */
-    public String createJwt(String userId){
+    /*public String createJwt(String userId){
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         //设置头信息
         HashMap<String, Object> header = new HashMap<>(2);
@@ -34,7 +34,7 @@ public class JWTUtils {
         return JWT.create().withHeader(header)
                 .withClaim(RequestKeyConstants.USER_ID,userId)
                 .withExpiresAt(new Date(System.currentTimeMillis()+TOKEN_EXPIRE_TIME)).sign(algorithm);
-    }
+    }*/
 
     /**
      * 解析jwt

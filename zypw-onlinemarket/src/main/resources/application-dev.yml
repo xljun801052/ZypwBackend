@@ -1,0 +1,11 @@
+server:
+  port: 12022
+spring:
+  application:
+    name: onlinemarket-service
+  cloud:
+    nacos:
+      # 服务注册发现中心
+      discovery:
+        server-addr: 127.0.0.1:8848
+

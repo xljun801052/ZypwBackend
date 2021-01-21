@@ -1,6 +1,4 @@
-server:
-  port: 12022
 spring:
-  application:
-    name: onlinemarket-service-1
+  profiles:
+    active: dev
 

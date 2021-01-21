@@ -24,3 +24,9 @@
 #### ***解决：***
 这里的问题是对应字段有下划线，而mybatis没有配置驼峰匹配
 <u>https://www.pianshen.com/article/31271358512/</u>
+
+### 004-Nacos1.4.0启动后服务注册失败：failed to req API:/nacos/v1/ns/instance after all servers([127.0.0.1:8848]) tried: failed to req API:127.0.0.1:8848/nacos/v1/ns/instance. code:503 msg: server is DOWN now, please try again later!？
+#### ***解决：***
+删除{nacos.home}/nacos/data/protocol文件夹后重新启动。因为1.4.0使用了jraft， 现在引入了SofaJRaft，单机情况下也是存在节点了。流程和集群一样，需要先选出leader，再提供服务。
+jraft会记录前一次启动的集群地址，如果重启机器ip变了的话，会导致jraft记录的地址失效，从而导致选主出问题。
+<u>https://github.com/alibaba/nacos/issues/4210</u>

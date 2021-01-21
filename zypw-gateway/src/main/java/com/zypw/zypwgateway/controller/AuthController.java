@@ -9,7 +9,6 @@ import com.zypw.zypwgateway.utils.JWTUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class AuthController {
     /**
      * 登录认证
      * */
-    @PostMapping("/auth/login")
+    /*@PostMapping("/auth/login")
     public Result login(HttpServletRequest request, @Valid @RequestBody LoginDTO loginDto) {
 
         String ip = IpAddressUtils.getIpAddr(request);
@@ -43,6 +42,6 @@ public class AuthController {
         String token = JWTUtils.createJwt(user.getId() + "");
         data.put("token",token);
         return Result.success(data);
-    }
+    }*/
 
 }

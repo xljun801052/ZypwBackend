@@ -4,7 +4,6 @@ package com.xlys.zypwhomepage.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xlys.zypwhomepage.domain.Article;
-import com.xlys.zypwhomepage.domain.Comment;
 import com.xlys.zypwhomepage.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;

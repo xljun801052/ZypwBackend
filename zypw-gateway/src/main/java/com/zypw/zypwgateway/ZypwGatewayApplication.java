@@ -3,9 +3,7 @@ package com.zypw.zypwgateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.gateway.route.RouteLocator;
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * gateway网关服务：本系统目前只使用两个功能
@@ -15,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+//开启对Feign的支持
+@EnableFeignClients(basePackages = {"com.zypw.zypwcommon.feignClient"})
 public class ZypwGatewayApplication {
 
 
