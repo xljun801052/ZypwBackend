@@ -19,4 +19,23 @@
         select * from t_homepage_article where 1=1
     </select>
 
+    <!--查询文章所有评论数据-->
+    <select id="getAllArticleComments" resultType="java.util.Map">
+        select
+            t.id as "id",
+            t2.avatar as "userAvatar",
+            t2.user_account as "username",
+            t.content as "commentContent",
+            t.comment_time as "commentTime",
+            t.favorite_count as "commentFavoriteCount",
+            t.reply_count as "commentReplyCount"
+        from
+            zypw_test.t_homepage_article_comment t
+        left join t_sys_user t2 on
+            t2.user_id = t.comment_owner
+            and t2.alive_flag = 0
+        where
+            t.opus_id = #{id}
+    </select>
+
 </mapper>
