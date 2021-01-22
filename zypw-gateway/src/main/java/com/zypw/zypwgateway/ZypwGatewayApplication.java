@@ -7,9 +7,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * gateway网关服务：本系统目前只使用两个功能
- * 		1、权限认证(JWT)
- * 		2、统一路由跳转
- * */
+ * 1、权限认证(JWT)
+ * 2、统一路由跳转
+ */
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -18,9 +18,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class ZypwGatewayApplication {
 
 
-	/**
-	 * 这是一段spring cloud gateway的网关代码,展示了如何在代码中配置gateway的路由系统
-	 * */
+    /**
+     * 这是一段spring cloud gateway的网关代码,展示了如何在代码中配置gateway的路由系统
+     */
 	/*@Bean
 	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
@@ -43,9 +43,8 @@ public class ZypwGatewayApplication {
 						.uri("http://httpbin.org"))
 				.build();
 	}*/
-
-	public static void main(String[] args) {
-		SpringApplication.run(ZypwGatewayApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ZypwGatewayApplication.class, args);
+    }
 
 }

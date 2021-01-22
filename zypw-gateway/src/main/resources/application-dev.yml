@@ -24,27 +24,31 @@ spring:
           # lb表示从注册中心获取服务
           uri: lb://homepage-service
           predicates:
-          # 如果请求地址满足/homepage/**,则将请求转发到homepage-service服务
-          - Path=/homepage/**
+            # 如果请求地址满足/homepage/**,则将请求转发到homepage-service服务
+            - Path=/homepage/**
           # - Cookie=mycookie,mycookievalue # 暂时不用对cookie进行校验
           filters:
-          # 去除原请求地址中从左往右的n级路径【n为StripPrefix配置的value值】
-          - StripPrefix=1
-          # 熔断降级过滤器回调处理配置
-          - name: Hystrix
-            args:
-              name: homepage-fallback
-              fallbackUri: forward:/homepage_fallback
+            # 去除原请求地址中从左往右的n级路径【n为StripPrefix配置的value值】
+            - StripPrefix=1
+            # 熔断降级过滤器回调处理配置
+            - name: Hystrix
+              args:
+                name: homepage-fallback
+                fallbackUri: forward:/homepage_fallback
+
+        # onlinemarket-service路由转发配置
         - id: onlinemarket-server
           uri: lb://onlinemarket-service
           predicates:
-          - Path=/onlinemarket/**
+            - Path=/onlinemarket/**
           filters:
-          - StripPrefix=1
-          - name: Hystrix
-            args:
-              name: onlinemarket-fallback
-              fallbackUri: forward:/onlinemarket_fallback
+            - StripPrefix=1
+            - name: Hystrix
+              args:
+                name: onlinemarket-fallback
+                fallbackUri: forward:/onlinemarket_fallback
+
+        # 全局路由转发配置
         - id: gateway-server
           uri: lb://gateway-service
           predicates:

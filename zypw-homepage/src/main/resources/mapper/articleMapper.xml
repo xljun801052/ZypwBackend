@@ -3,11 +3,11 @@
 <mapper namespace="com.xlys.zypwhomepage.mapper.ArticleMapper">
 
     <resultMap id="article" type="com.xlys.zypwhomepage.domain.Article">
-        <result column="id" jdbcType="INTEGER" property="id" />
-        <result column="title" jdbcType="VARCHAR" property="title" />
-        <result column="read_times" jdbcType="INTEGER" property="readTimes" />
-        <result column="collect_times" jdbcType="INTEGER" property="collectTimes" />
-        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="read_times" jdbcType="INTEGER" property="readTimes"/>
+        <result column="collect_times" jdbcType="INTEGER" property="collectTimes"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
     </resultMap>
 
     <select id="getArticleDetailInfoById" resultType="com.xlys.zypwhomepage.domain.Article">

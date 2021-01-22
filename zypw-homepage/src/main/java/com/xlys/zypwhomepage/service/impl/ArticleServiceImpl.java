@@ -29,8 +29,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<HashMap<String,Object>> getAllArticleComments(Integer id) {
-        List<HashMap<String,Object>> commentList = articleMapper.getAllArticleComments(id);
+    public List<HashMap<String, Object>> getAllArticleComments(Integer id) {
+        List<HashMap<String, Object>> commentList = articleMapper.getAllArticleComments(id);
         return commentList;
     }
 }

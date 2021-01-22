@@ -11,5 +11,5 @@ public interface ArticleService {
 
     List<Article> getAllArticleDetail();
 
-    List<HashMap<String,Object>> getAllArticleComments(Integer id);
+    List<HashMap<String, Object>> getAllArticleComments(Integer id);
 }

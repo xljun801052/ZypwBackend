@@ -10,8 +10,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = {"com.zypw.zypwcommon.feignClient"})
 public class ZypwOnlinemarketApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ZypwOnlinemarketApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ZypwOnlinemarketApplication.class, args);
+    }
 
 }

@@ -12,7 +12,7 @@ public class Article {
     private Integer readTimes;
 
     // 文章收藏次数
-    private  Integer collectTimes;
+    private Integer collectTimes;
 
     // 文章内容，数据库为longtext类型
     private String content;

@@ -53,7 +53,7 @@ public class ArticleController {
      */
     @RequestMapping("/comments/{id}")
     public String getAllArticleComments(@PathVariable("id") Integer id) {
-        List<HashMap<String,Object>> commentList = articleService.getAllArticleComments(id);
+        List<HashMap<String, Object>> commentList = articleService.getAllArticleComments(id);
         return JSONObject.toJSONString(commentList, SerializerFeature.WriteNullNumberAsZero);
     }
 

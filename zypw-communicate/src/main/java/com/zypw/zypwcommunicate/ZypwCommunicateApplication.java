@@ -8,8 +8,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 public class ZypwCommunicateApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ZypwCommunicateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ZypwCommunicateApplication.class, args);
+    }
 
 }

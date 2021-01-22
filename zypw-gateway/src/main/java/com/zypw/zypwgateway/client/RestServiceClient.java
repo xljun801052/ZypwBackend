@@ -14,7 +14,7 @@ public class RestServiceClient {
 
     /**
      * 测试feign调用homepage-service服务
-     * */
+     */
 //    @RequestMapping(value = "/client/getArticleInfo", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     @RequestMapping(value = "/client/getArticleInfo", method = RequestMethod.GET)
     public String getArticleInfo() {
