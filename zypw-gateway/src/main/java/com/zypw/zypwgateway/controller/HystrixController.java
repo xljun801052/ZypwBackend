@@ -23,4 +23,12 @@ public class HystrixController {
     public ResponseEntity onlonemarketFallback() {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("onlonemarket服务异常!");
     }
+
+    /**
+     * gateway熔断降级处理返回
+     * */
+    @RequestMapping("/gateway_fallback")
+    public ResponseEntity gatewayFallback() {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("gateway服务异常!");
+    }
 }

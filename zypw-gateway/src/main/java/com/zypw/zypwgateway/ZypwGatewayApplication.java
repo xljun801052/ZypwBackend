@@ -13,7 +13,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-//开启对Feign的支持
+//开启对Feign的支持，同时扫描接口生成代理类
 @EnableFeignClients(basePackages = {"com.zypw.zypwcommon.feignClient"})
 public class ZypwGatewayApplication {
 

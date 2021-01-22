@@ -18,10 +18,19 @@ public class RestServiceClient {
 //    @RequestMapping(value = "/client/getArticleInfo", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     @RequestMapping(value = "/client/getArticleInfo", method = RequestMethod.GET)
     public String getArticleInfo() {
-        System.out.println("准备调用homepage-service...");
+        System.out.println("不经过网关-准备调用homepage-service...");
         String allArticleDetail = client.getAllArticleDetail();
         System.out.println("allArticleDetail = " + allArticleDetail);
-        System.out.println("完成调用homepage-service...");
+        System.out.println("不经过网关-完成调用homepage-service...");
+        return allArticleDetail;
+    }
+
+    @RequestMapping(value = "/getArticleInfo", method = RequestMethod.GET)
+    public String getArticleInfo2() {
+        System.out.println("经过网关-准备调用homepage-service...");
+        String allArticleDetail = client.getAllArticleDetail();
+        System.out.println("allArticleDetail = " + allArticleDetail);
+        System.out.println("经过网关-完成调用homepage-service...");
         return allArticleDetail;
     }
 }

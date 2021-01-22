@@ -9,7 +9,9 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
     # 配置gateway网关：https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/
+    #     1、SpringCloud Gateway的路由转发必须是满足所有的predicates才可以算匹配成功，从而被转发。当然，相同的Predicate也可以配置多个
     # 参考文档：https://blog.csdn.net/weixin_44141495/article/details/110160186
+    # 参考文档：https://www.jianshu.com/p/c8ac84e820cc
     gateway:
       discovery:
         locator:
@@ -17,6 +19,7 @@ spring:
           # 设置serviceId大小，默认大写
           lower-case-service-id: true
       routes:
+        # homepage-service路由转发配置
         - id: homepage-server
           # lb表示从注册中心获取服务
           uri: lb://homepage-service
@@ -42,5 +45,18 @@ spring:
             args:
               name: onlinemarket-fallback
               fallbackUri: forward:/onlinemarket_fallback
+        - id: gateway-server
+          uri: lb://gateway-service
+          predicates:
+            # 设置对所有请求进行拦截从而进行token权限认证
+            - Path=/{oldPath}
+            # 进行请求头的token检测
+            #- Header=Zypw-Token, \d+
+          filters:
+            - StripPrefix=1
+            - name: Hystrix
+              args:
+                name: gateway-fallback
+                fallbackUri: forward:/gateway_fallback
 
 
