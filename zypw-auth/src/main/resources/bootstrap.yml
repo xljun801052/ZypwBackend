@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        # 应用配置中心
+        server-addr: 127.0.0.1:8848
+        # 配置文件格式：yml【目前仅支持properties、yml两种】
+        file-extension: yml

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zypw.zypwauth.mapper.AuthorizeMapper">
-    <resultMap id="User" type="com.zypw.zypwcommon.entity.User">
+    <resultMap id="User" type="com.zypw.zypwcommon.entity.businessEntity.User">
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="user_account" jdbcType="VARCHAR" property="userAccount"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
@@ -10,16 +10,16 @@
         <result column="self_introduce" jdbcType="VARCHAR" property="selfIntroduce"/>
         <result column="user_level" jdbcType="INTEGER" property="userLevel"/>
         <result column="school_name" jdbcType="VARCHAR" property="schoolName"/>
-        <result column="birth_date" jdbcType="Date" property="birthDate"/>
+        <result column="birth_date" jdbcType="TIMESTAMP" property="birthDate"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-        <result column="bg_img" jdbcType="Date" property="bgImg"/>
-        <result column="create_time" jdbcType="Date" property="createTime"/>
-        <result column="modify_time" jdbcType="Date" property="modifyTime"/>
+        <result column="bg_img" jdbcType="VARCHAR" property="bgImg"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
         <result column="alive_flag" jdbcType="INTEGER" property="aliveFlag"/>
     </resultMap>
 
-    <select id="findUserInfoByUserId" resultType="com.zypw.zypwcommon.entity.User">
+    <select id="findUserInfoByUserId" resultType="com.zypw.zypwcommon.entity.businessEntity.User">
         select * from t_sys_user where user_id = #{userId}
     </select>
 </mapper>

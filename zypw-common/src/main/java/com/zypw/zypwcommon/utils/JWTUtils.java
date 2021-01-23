@@ -1,4 +1,4 @@
-package com.zypw.zypwauth.utils;
+package com.zypw.zypwcommon.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

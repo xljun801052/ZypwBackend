@@ -2,8 +2,8 @@ package com.zypw.zypwauth.authorize;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zypw.zypwauth.mapper.AuthorizeMapper;
-import com.zypw.zypwauth.utils.JWTUtils;
-import com.zypw.zypwcommon.entity.User;
+import com.zypw.zypwcommon.utils.JWTUtils;
+import com.zypw.zypwcommon.entity.businessEntity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -73,35 +73,8 @@ public class LoginAuth {
 
     @PostMapping("/api")
     public String apiAuth(HttpServletRequest request) {
-        Map<Object, Object> resultInfo = new HashMap<>();
-        System.out.println("进行API接口调用权限认证");
-        // 判断是否有jwt,没有则返回认证未通过
-        String token = request.getHeader("JWT");
-        if (token == null || token == "") {
-            resultInfo.put("status", 203);
-            resultInfo.put("msg", "token遗失");
-            return JSONObject.toJSONString(resultInfo);
-        } else {
-            // 解析token,根据token中的userId从缓存中获取对应userId的token信息进行对比，进行判断
-            Long userId = JWTUtils.verify(token);
-            if (userId != null) {
-                String cacheToken = stringRedisTemplate.opsForValue().get(userId);
-                // token一致，予以放行,进行下一步流程
-                if (cacheToken.equals(token)) {
-                    resultInfo.put("status", 206);
-                    resultInfo.put("msg", "OK~授权成功!准备下一环节的api调用权限认证");
-                    return JSONObject.toJSONString(resultInfo);
-                } else {
-                    resultInfo.put("status", 205);
-                    resultInfo.put("msg", "token与缓存token不一致");
-                    return JSONObject.toJSONString(resultInfo);
-                }
-            } else {
-                resultInfo.put("status", 204);
-                resultInfo.put("msg", "非法token");
-                return JSONObject.toJSONString(resultInfo);
-            }
-        }
+        System.out.println("微服務調用成功！");
+        return "success微服務調用成功！!";
     }
 
 }

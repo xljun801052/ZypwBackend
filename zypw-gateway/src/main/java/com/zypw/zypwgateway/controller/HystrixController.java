@@ -31,4 +31,12 @@ public class HystrixController {
     public ResponseEntity gatewayFallback() {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("gateway服务异常!");
     }
+
+    /**
+     * auth熔断降级处理返回
+     */
+    @RequestMapping("/auth_fallback")
+    public ResponseEntity authFallback() {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("auth服务异常!");
+    }
 }

@@ -1,6 +1,18 @@
+server:
+  port: 12018
 spring:
   application:
     name: auth-service
+  cloud:
+    nacos:
+      # 服务注册发现中心
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    username: root
+    password: 123789Xlys!@#$
+    url: jdbc:mysql://localhost:3306/zypw_test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
   # redis 服务器配置
   redis:
     host: 127.0.0.1
@@ -19,5 +31,10 @@ spring:
         max-active: 10
         # 连接最大等待数
         max-wait: 3000
-server:
-  port: 12018
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.xlys.zypwhomepage.domain
+  #  开启驼峰匹配，否则一些带有下划线字段的值做resultMap映射时值为null
+  configuration:
+    map-underscore-to-camel-case: true

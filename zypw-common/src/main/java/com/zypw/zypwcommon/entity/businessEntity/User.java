@@ -1,4 +1,4 @@
-package com.zypw.zypwcommon.entity;
+package com.zypw.zypwcommon.entity.businessEntity;
 
 import java.util.Date;
 
