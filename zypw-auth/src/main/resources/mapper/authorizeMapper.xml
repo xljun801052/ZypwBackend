@@ -19,7 +19,7 @@
         <result column="alive_flag" jdbcType="INTEGER" property="aliveFlag"/>
     </resultMap>
 
-    <select id="findUserInfoByUserId" resultType="com.zypw.zypwcommon.entity.businessEntity.User">
-        select * from t_sys_user where user_id = #{userId}
+    <select id="findUserInfoByUsername" resultType="com.zypw.zypwcommon.entity.businessEntity.User">
+        select * from t_sys_user where user_account = #{username}
     </select>
 </mapper>

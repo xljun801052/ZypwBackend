@@ -49,11 +49,11 @@ spring:
                 name: onlinemarket-fallback
                 fallbackUri: forward:/onlinemarket_fallback
 
-        # 登录路由的配置
+        # 登录和退出路由的配置
         - id: auth-server
           uri: lb://auth-service
           predicates:
-            - Path=/login/**
+            - Path=/login/**,/logout/**
           filters:
             # 转发到鉴权服务时，改写请求uri，在原URI前面添加一级'/auth'
             - PrefixPath=/auth
@@ -62,16 +62,15 @@ spring:
                 name: auth-fallback
                 fallbackUri: forward:/auth_fallback
 
-          # api接口访问路由的配置
-        - id: api-server
-          uri: lb://auth-service
+          # homepage文章接口访问路由的配置
+        - id: homepage-article-server
+          uri: lb://homepage-service
           predicates:
-            - Path=/api/**
+            - Path=/article/**
             # 进行请求头的token检测
 #            - Header=Zypw-Token, \w+
           filters:
-            - PrefixPath=/auth
             - name: Hystrix
               args:
-                name: auth-fallback
-                fallbackUri: forward:/auth_fallback
+                name: hoempage-fallback
+                fallbackUri: forward:/hoempage_fallback

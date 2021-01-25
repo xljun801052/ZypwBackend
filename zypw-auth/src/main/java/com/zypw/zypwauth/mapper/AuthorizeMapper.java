@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AuthorizeMapper {
-    User findUserInfoByUserId(String userId);
+    User findUserInfoByUsername(String username);
 }

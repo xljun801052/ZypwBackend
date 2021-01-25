@@ -2,6 +2,7 @@ package com.zypw.zypwauth.authorize;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zypw.zypwauth.mapper.AuthorizeMapper;
+import com.zypw.zypwcommon.entity.responseEntity.ResponseResult;
 import com.zypw.zypwcommon.utils.JWTUtils;
 import com.zypw.zypwcommon.entity.businessEntity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +42,20 @@ public class LoginAuth {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 登录认证处理
+     * */
     @PostMapping("/login")
-    public String loginAuth(@RequestParam("userId") String userId, @RequestParam("password") String password) {
+    public String loginAuth(@RequestBody String jsonData) {
         Map<Object, Object> resultInfo = new HashMap<>();
         // 拿到用户登录信息参数
-        System.out.println("用户信息--》账户:" + userId + ",密码:" + password);
+        // TODO: 2021/1/24 此处必须保证账号是唯一的，否则不能根据账户名来查询
+        JSONObject data = (JSONObject) JSONObject.parse(jsonData);
+        String username = data.get("username").toString();
+        String password = data.get("password").toString();
+        System.out.println("用户信息--》唯一账户:" + username + ",密码:" + password);
         // 比对数据库的用户名和密码信息，一致则予以登录成功，否则返回失败信息
-        User user = authorizeMapper.findUserInfoByUserId(userId);
+        User user = authorizeMapper.findUserInfoByUsername(username);
         if (user == null) {
             System.out.println("用户不存在");
             resultInfo.put("status", 201);
@@ -65,16 +73,35 @@ public class LoginAuth {
         resultInfo.put("status", 200);
         resultInfo.put("msg", "登陆成功");
         // 登录成功生成jwt并返回，同时将用户数据放入Redis缓存中，设置过期时间
-        String token = JWTUtils.sign(Long.parseLong(userId));
+        String token = JWTUtils.sign(Long.parseLong(user.getUserId().toString()));
         resultInfo.put("token", token);
-        stringRedisTemplate.opsForValue().set(userId, token);
+        System.out.println("userId = "+user.getUserId().toString()+",token = " + token);
+        stringRedisTemplate.opsForValue().set(user.getUserId().toString(), token);
         return JSONObject.toJSONString(resultInfo);
     }
 
-    @PostMapping("/api")
-    public String apiAuth(HttpServletRequest request) {
-        System.out.println("微服務調用成功！");
-        return "success微服務調用成功！!";
+    /**
+     * 退出处理
+     * */
+    @PostMapping("/logout")
+    public String logoutHandle(@RequestParam("userId") String userId) {
+        Map<Object, Object> resultInfo = new HashMap<>();
+        //step0:如果userId为空，提示异常,否则删除用户的redis缓存信息即可
+        if (userId != null) {
+            stringRedisTemplate.delete(userId);
+            resultInfo.put("status", 216);
+            resultInfo.put("msg", "退出成功");
+        } else {
+            resultInfo.put("status", 215);
+            resultInfo.put("msg", "退出失败，用户状态异常");
+        }
+        return JSONObject.toJSONString(resultInfo);
     }
+
+//    @PostMapping("/api")
+//    public String apiAuth(HttpServletRequest request) {
+//        System.out.println("微服務調用成功！");
+//        return "success微服務調用成功！!";
+//    }
 
 }

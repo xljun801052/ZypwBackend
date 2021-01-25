@@ -10,7 +10,9 @@ public enum ResponseResult {
     TOKEN_INVALLID(211,"非法token!"),
     TOKEN_MISSING(212,"token缺失!"),
     USER_MISSING(213,"用户不存在!"),
-    TOKEN_EXPIRED(214,"TOKEN过期!请重新登陆");
+    TOKEN_EXPIRED(214,"TOKEN过期!请重新登陆"),
+    LOGOUT_FAIL(215,"退出失败，用户状态异常"),
+    LOGOUT_SUCCESS(216,"退出成功");
 
     private int responseCode;
     private String responseMsg;

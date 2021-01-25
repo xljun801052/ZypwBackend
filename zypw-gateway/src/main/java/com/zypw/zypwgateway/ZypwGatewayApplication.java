@@ -4,6 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
  * gateway网关服务：本系统目前只使用两个功能
@@ -43,6 +48,28 @@ public class ZypwGatewayApplication {
 						.uri("http://httpbin.org"))
 				.build();
 	}*/
+
+    /**
+     * 配置跨域
+     * @return
+     */
+    @Bean
+    public CorsWebFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        // cookie跨域
+        config.setAllowCredentials(Boolean.TRUE);
+        config.addAllowedMethod("*");
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        // 配置前端js允许访问的自定义响应头
+        config.addExposedHeader("Authorization:");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsWebFilter(source);
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(ZypwGatewayApplication.class, args);
     }
