@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ArticleMapper {
-    Article getArticleDetailInfoById(Integer id);
+    Article getArticleDetailInfoById(Integer aid, Integer userId);
 
     List<Article> getAllArticleDetail();
 

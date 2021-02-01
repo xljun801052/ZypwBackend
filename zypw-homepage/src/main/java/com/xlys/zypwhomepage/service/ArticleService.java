@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ArticleService {
-    Article getArticleDetailInfoById(Integer id);
+    Article getArticleDetailInfoById(Integer aid,Integer userId);
 
     List<Article> getAllArticleDetail();
 

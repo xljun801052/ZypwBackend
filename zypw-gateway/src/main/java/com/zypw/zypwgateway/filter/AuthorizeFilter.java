@@ -42,7 +42,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
-        String token = serverHttpRequest.getHeaders().getFirst("Zypw-Token");
+        String token = serverHttpRequest.getHeaders().getFirst("token");
         // token为空,返回认证不通过【开发阶段可以把这几个返回报错区别一下】
         serverHttpResponse.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
         if (StringUtils.isBlank(token)) {
@@ -62,8 +62,8 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
                 } else {
                     // token一致，通过此过滤器，予以放行,进行下一步流程
                     if (cacheToken.equals(token)) {
-                        serverHttpResponse.setStatusCode(HttpStatus.OK);
-                        DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.SUCCESS).getBytes());
+                        //serverHttpResponse.setStatusCode(HttpStatus.OK);
+                        //DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.SUCCESS).getBytes());
                         //return serverHttpResponse.writeWith(Flux.just(dataBuffer));
                         return chain.filter(exchange);
                     } else {

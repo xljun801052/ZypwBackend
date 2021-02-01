@@ -67,9 +67,8 @@ spring:
           uri: lb://homepage-service
           predicates:
             - Path=/article/**
-            # 进行请求头的token检测
-#            - Header=Zypw-Token, \w+
           filters:
+#            - AddRequestParameter=userId,
             - name: Hystrix
               args:
                 name: hoempage-fallback

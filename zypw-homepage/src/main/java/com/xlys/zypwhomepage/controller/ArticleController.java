@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/article")
-@CrossOrigin
 public class ArticleController {
 
     @Autowired
@@ -29,13 +28,14 @@ public class ArticleController {
     /**
      * 获取单个文章详情
      */
-    @RequestMapping("/detail/{id}")
-    public String getArticleDetail(@PathVariable("id") Integer id) {
-        System.out.println("id = " + id);
-        Article article = articleService.getArticleDetailInfoById(id);
+    @RequestMapping("/detail/{aid}")
+    public String getArticleDetail(@PathVariable("aid") Integer aid) {
+        Integer userId = 1;
+        System.out.println("aid = " + aid);
+        Article article = articleService.getArticleDetailInfoById(aid,userId);
         System.out.println("article = " + article);
         String jsonString = JSONObject.toJSONString(article, SerializerFeature.WriteNullNumberAsZero);
-        System.out.println("文章" + id + "详情 = " + jsonString);
+        System.out.println("文章" + aid + "详情 = " + jsonString);
         return jsonString;
     }
 
