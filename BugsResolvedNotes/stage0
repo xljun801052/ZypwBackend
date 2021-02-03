@@ -30,3 +30,7 @@
 删除{nacos.home}/nacos/data/protocol文件夹后重新启动。因为1.4.0使用了jraft， 现在引入了SofaJRaft，单机情况下也是存在节点了。流程和集群一样，需要先选出leader，再提供服务。
 jraft会记录前一次启动的集群地址，如果重启机器ip变了的话，会导致jraft记录的地址失效，从而导致选主出问题。
 <u>https://github.com/alibaba/nacos/issues/4210</u>
+
+### 005-网关转发的下游请求由原先http协议变成了https协议，报错：IllegalArgumentException: Invalid character found in method name. HTTP method names must be tokens
+#### ***解决：***
+https://www.it610.com/article/1294222890476052480.htm

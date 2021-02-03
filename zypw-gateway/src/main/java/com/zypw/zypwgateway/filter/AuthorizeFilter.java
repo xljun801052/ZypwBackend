@@ -32,15 +32,17 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println("global-filter is working...");
         // step0:从请求中获取基本信息
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
         String uri = serverHttpRequest.getURI().getPath();
+
         // step1:进行uri白名单校验，如果在白名单中，则不进行token认证，直接通过
         if (uri.indexOf("/login") >= 0 || uri.indexOf("/logout") >= 0) {
             return chain.filter(exchange);
         }
+        System.out.println("global-filter is working...");
+
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
         String token = serverHttpRequest.getHeaders().getFirst("token");
         // token为空,返回认证不通过【开发阶段可以把这几个返回报错区别一下】
@@ -51,6 +53,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
             return serverHttpResponse.writeWith(Flux.just(dataBuffer));
         } else {
             // token不为空,进行token信息认证
+            // TODO: 2021-02-02 这里有个BUG，有时候根据token解析出来的userId为0，与预期不一致？
             Long userId = JWTUtils.verify(token);
             if (userId != null) {
                 String cacheToken = stringRedisTemplate.opsForValue().get(userId.toString());

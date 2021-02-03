@@ -53,7 +53,7 @@ public class LoginAuth {
         JSONObject data = (JSONObject) JSONObject.parse(jsonData);
         String username = data.get("username").toString();
         String password = data.get("password").toString();
-        System.out.println("用户信息--》唯一账户:" + username + ",密码:" + password);
+        System.out.println("用户参数信息--》唯一账户:" + username + ",密码:" + password);
         // 比对数据库的用户名和密码信息，一致则予以登录成功，否则返回失败信息
         User user = authorizeMapper.findUserInfoByUsername(username);
         if (user == null) {
@@ -75,7 +75,7 @@ public class LoginAuth {
         // 登录成功生成jwt并返回，同时将用户数据放入Redis缓存中，设置过期时间
         String token = JWTUtils.sign(Long.parseLong(user.getUserId().toString()));
         resultInfo.put("token", token);
-        System.out.println("userId = "+user.getUserId().toString()+",token = " + token);
+        System.out.println("生成的信息：userId = "+user.getUserId().toString()+",token = " + token);
         stringRedisTemplate.opsForValue().set(user.getUserId().toString(), token);
         return JSONObject.toJSONString(resultInfo);
     }

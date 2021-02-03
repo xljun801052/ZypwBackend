@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="getArticleDetailInfoById" resultType="com.xlys.zypwhomepage.domain.Article">
-        select * from t_homepage_article where id = #{id}
+        select * from t_homepage_article where id = #{aid}
     </select>
 
     <!--查询所有文章数据-->
@@ -29,7 +29,7 @@
             t.comment_time as "commentTime",
             t.favorite_count as "commentFavoriteCount",
             t.reply_count as "commentReplyCount",
-            if(tuc.id is null,1,0) as "isCurrentUserFavorite"
+            tuc.valid_flag as "isCurrentUserFavorite"
         from
             zypw_test.t_homepage_article_comment t
         left join t_sys_user t2 on
@@ -37,11 +37,9 @@
             and t2.alive_flag = 0
         left join t_user_comment tuc on
         	t.id =tuc.comment_id and
-        	tuc.valid_flag =0 and
-        	t2.user_id = tuc.user_id
         where
             t.opus_id = #{aid}
-            and t2.user_id = #{userId}
+            and tuc.user_id = #{userId}
     </select>
 
 </mapper>
