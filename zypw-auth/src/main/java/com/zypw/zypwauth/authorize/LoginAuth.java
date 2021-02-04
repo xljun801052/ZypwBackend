@@ -76,6 +76,7 @@ public class LoginAuth {
         String token = JWTUtils.sign(Long.parseLong(user.getUserId().toString()));
         resultInfo.put("token", token);
         System.out.println("生成的信息：userId = "+user.getUserId().toString()+",token = " + token);
+        // TODO: 2021-02-04 我没有设置token过期时间，为什么token会过期？
         stringRedisTemplate.opsForValue().set(user.getUserId().toString(), token);
         return JSONObject.toJSONString(resultInfo);
     }

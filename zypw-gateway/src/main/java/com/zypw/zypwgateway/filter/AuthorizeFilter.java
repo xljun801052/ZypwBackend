@@ -37,6 +37,8 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
         String uri = serverHttpRequest.getURI().getPath();
 
+        // TODO: 2021-02-04 这里有个BUG：每次首次登录时候都是下游服务有问题，然后503 Service Unavailable ，待解决一下！应该和网关与服务启动顺序是否有关？
+        // 第二次再请求前台还是503错误，但是实际上已经验证成功生成了token并存放到了redis中了！
         // step1:进行uri白名单校验，如果在白名单中，则不进行token认证，直接通过
         if (uri.indexOf("/login") >= 0 || uri.indexOf("/logout") >= 0) {
             return chain.filter(exchange);
@@ -56,7 +58,9 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
             // TODO: 2021-02-02 这里有个BUG，有时候根据token解析出来的userId为0，与预期不一致？
             Long userId = JWTUtils.verify(token);
             if (userId != null) {
+                // TODO: 2021-02-04 这里有个BUG：过了一会没动之后。token就会提示过期！提示"TOKEN_EXPIRED"，必须重新登录才可以
                 String cacheToken = stringRedisTemplate.opsForValue().get(userId.toString());
+                System.out.println("cacheToken = " + cacheToken);
                 // token在缓存中没有，即token失效了
                 if (cacheToken == null) {
                     serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
