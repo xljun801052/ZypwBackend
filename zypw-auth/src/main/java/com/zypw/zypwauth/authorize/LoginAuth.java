@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth")
@@ -77,7 +78,8 @@ public class LoginAuth {
         resultInfo.put("token", token);
         System.out.println("生成的信息：userId = "+user.getUserId().toString()+",token = " + token);
         // TODO: 2021-02-04 我没有设置token过期时间，为什么token会过期？
-        stringRedisTemplate.opsForValue().set(user.getUserId().toString(), token);
+        // 生产上设置2天过期，必须重新登录
+        stringRedisTemplate.opsForValue().set(user.getUserId().toString(), token,2L, TimeUnit.DAYS);
         return JSONObject.toJSONString(resultInfo);
     }
 

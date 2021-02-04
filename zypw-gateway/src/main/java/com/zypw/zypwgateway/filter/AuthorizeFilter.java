@@ -47,18 +47,19 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
         String token = serverHttpRequest.getHeaders().getFirst("token");
+        System.out.println("token = " + token);
         // token为空,返回认证不通过【开发阶段可以把这几个返回报错区别一下】
         serverHttpResponse.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-        if (StringUtils.isBlank(token)) {
+        // 这里token为"null"~_~
+        if (StringUtils.isBlank(token)||token.equalsIgnoreCase("null")) {
             serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);//401, "Unauthorized"
             DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.TOKEN_MISSING).getBytes());
             return serverHttpResponse.writeWith(Flux.just(dataBuffer));
         } else {
             // token不为空,进行token信息认证
-            // TODO: 2021-02-02 这里有个BUG，有时候根据token解析出来的userId为0，与预期不一致？
             Long userId = JWTUtils.verify(token);
+            System.out.println("userId = " + userId);
             if (userId != null) {
-                // TODO: 2021-02-04 这里有个BUG：过了一会没动之后。token就会提示过期！提示"TOKEN_EXPIRED"，必须重新登录才可以
                 String cacheToken = stringRedisTemplate.opsForValue().get(userId.toString());
                 System.out.println("cacheToken = " + cacheToken);
                 // token在缓存中没有，即token失效了
