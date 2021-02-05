@@ -1,8 +1,10 @@
 package com.zypw.zypwgateway.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.zypw.zypwcommon.entity.responseEntity.AxiosResult;
 import com.zypw.zypwcommon.entity.responseEntity.ResponseResult;
 import com.zypw.zypwcommon.utils.JWTUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -21,9 +23,15 @@ import reactor.core.publisher.Mono;
 
 /**
  * 自定义全局过滤器：进行token验证
+ *      验证逻辑：
+ *          如果access_token有效则认证直接通过
+ *          如果access_token无效，根据access_token拿到用户名核心信息拼接"refresh_token"组成refresh_token对应的key检验refresh_token，如果refresh_token有效，则返回前端更新token的信息，让其重新请求更新token接口
+ *          如果access_token和refresh_token均无效，返回前端通知其进行重新登录
+ *
  */
 @Component
 @CrossOrigin
+@Slf4j
 public class AuthorizeFilter implements GlobalFilter, Ordered {
 
     @Autowired
@@ -43,48 +51,51 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         if (uri.indexOf("/login") >= 0 || uri.indexOf("/logout") >= 0) {
             return chain.filter(exchange);
         }
-        System.out.println("global-filter is working...");
+        log.info("global-filter is working...");
 
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
         String token = serverHttpRequest.getHeaders().getFirst("token");
-        System.out.println("token = " + token);
-        // token为空,返回认证不通过【开发阶段可以把这几个返回报错区别一下】
+        log.info("token = " + token);
         serverHttpResponse.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-        // 这里token为"null"~_~
-        if (StringUtils.isBlank(token)||token.equalsIgnoreCase("null")) {
+        if (StringUtils.isBlank(token)||token.equalsIgnoreCase("null")) { // 这里增加对token为"null"的情况判断~_~
             serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);//401, "Unauthorized"
-            DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.TOKEN_MISSING).getBytes());
+            DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.TOKEN_MISSING)).getBytes());
             return serverHttpResponse.writeWith(Flux.just(dataBuffer));
         } else {
             // token不为空,进行token信息认证
             Long userId = JWTUtils.verify(token);
-            System.out.println("userId = " + userId);
+            log.info("token提取的userId：" + userId);
             if (userId != null) {
                 String cacheToken = stringRedisTemplate.opsForValue().get(userId.toString());
-                System.out.println("cacheToken = " + cacheToken);
-                // token在缓存中没有，即token失效了
+                log.info("cacheToken:" + cacheToken);
+                // token在缓存中没有，即token失效了,判断refresh_token情况
                 if (cacheToken == null) {
-                    serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-                    DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.TOKEN_EXPIRED).getBytes());
-                    return serverHttpResponse.writeWith(Flux.just(dataBuffer));
+                    String cacheRefreshToken = stringRedisTemplate.opsForValue().get(userId.toString()+"refresh_token");
+                    // refresh_token失效通知前端进行重新登录，否则通知前端进行token更新
+                    if (cacheRefreshToken != null) {
+                        serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
+                        DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.TOKEN_NEED_REFRESH)).getBytes());
+                        return serverHttpResponse.writeWith(Flux.just(dataBuffer));
+                    } else {
+                        serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
+                        DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.TOKEN_EXPIRED)).getBytes());
+                        return serverHttpResponse.writeWith(Flux.just(dataBuffer));
+                    }
                 } else {
-                    // token一致，通过此过滤器，予以放行,进行下一步流程
+                    // token一致，通过校验
                     if (cacheToken.equals(token)) {
-                        //serverHttpResponse.setStatusCode(HttpStatus.OK);
-                        //DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.SUCCESS).getBytes());
-                        //return serverHttpResponse.writeWith(Flux.just(dataBuffer));
                         return chain.filter(exchange);
                     } else {
                         // token不一致，验证失败
                         serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-                        DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.TOKEN_INVALLID).getBytes());
+                        DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.TOKEN_INVALLID)).getBytes());
                         return serverHttpResponse.writeWith(Flux.just(dataBuffer));
                     }
                 }
             } else {
-                // 用户不存在，验证失败
+                // 用户不存在，验证失败【其实也可能是非法token导致解析的用户信息不对导致用户查不到！】
                 serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-                DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(ResponseResult.USER_MISSING).getBytes());
+                DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.USER_MISSING)).getBytes());
                 return serverHttpResponse.writeWith(Flux.just(dataBuffer));
             }
         }

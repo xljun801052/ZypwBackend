@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zypw.zypwcommon.utils.JWTUtils;
 import io.netty.buffer.ByteBufAllocator;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import java.util.regex.Pattern;
  */
 @Component
 @CrossOrigin
+@Slf4j
 public class ModifyRequestFilter implements GlobalFilter, Ordered {
 
     private static Logger logger = LoggerFactory.getLogger("ModifyRequestFilter");
@@ -60,7 +62,7 @@ public class ModifyRequestFilter implements GlobalFilter, Ordered {
         if (uriPath.indexOf("/login") >= 0 || uriPath.indexOf("/logout") >= 0) {
             return chain.filter(exchange);
         }
-        System.out.println("modifyRequest-filter is working...");
+        log.info("modifyRequest-filter is working...");
         // 拿到token,提取userId，带到下游
         String token = serverHttpRequest.getHeaders().getFirst("token");
         Integer userId = Math.toIntExact(JWTUtils.verify(token));
@@ -73,7 +75,6 @@ public class ModifyRequestFilter implements GlobalFilter, Ordered {
         // 获取Post请求体的方法，无论是application/x-www-form-urlencoded和application/json都可以通过上面的方式。
         if (methodValue.equalsIgnoreCase("POST")) {
             String bodyStr = resolveBodyFromRequest1(serverHttpRequest);
-            System.out.println("bodyStr = " + bodyStr);
             // 添加新的userId到requestBody中去
             JsonNode jsonNode = null;
             String newBodyStr = null;
