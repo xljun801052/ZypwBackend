@@ -54,16 +54,16 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         log.info("global-filter is working...");
 
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
-        String token = serverHttpRequest.getHeaders().getFirst("token");
-        log.info("token = " + token);
+        String access_token = serverHttpRequest.getHeaders().getFirst("access_token");
+        log.info("access_token = " + access_token);
         serverHttpResponse.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-        if (StringUtils.isBlank(token)||token.equalsIgnoreCase("null")) { // 这里增加对token为"null"的情况判断~_~
+        if (StringUtils.isBlank(access_token)||access_token.equalsIgnoreCase("null")) { // 这里增加对token为"null"的情况判断~_~
             serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);//401, "Unauthorized"
             DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(JSON.toJSONString(new AxiosResult(ResponseResult.TOKEN_MISSING)).getBytes());
             return serverHttpResponse.writeWith(Flux.just(dataBuffer));
         } else {
             // token不为空,进行token信息认证
-            Long userId = JWTUtils.verify(token);
+            Long userId = JWTUtils.verify(access_token);
             log.info("token提取的userId：" + userId);
             if (userId != null) {
                 String cacheToken = stringRedisTemplate.opsForValue().get(userId.toString());
@@ -83,7 +83,7 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
                     }
                 } else {
                     // token一致，通过校验
-                    if (cacheToken.equals(token)) {
+                    if (cacheToken.equals(access_token)) {
                         return chain.filter(exchange);
                     } else {
                         // token不一致，验证失败

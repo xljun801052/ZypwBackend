@@ -64,10 +64,10 @@ public class ModifyRequestFilter implements GlobalFilter, Ordered {
         }
         log.info("modifyRequest-filter is working...");
         // 拿到token,提取userId，带到下游
-        String token = serverHttpRequest.getHeaders().getFirst("token");
-        Integer userId = Math.toIntExact(JWTUtils.verify(token));
-        if (!StringUtils.hasLength(token)) {
-            throw new IllegalArgumentException("token");
+        String access_token = serverHttpRequest.getHeaders().getFirst("access_token");
+        Integer userId = Math.toIntExact(JWTUtils.verify(access_token));
+        if (!StringUtils.hasLength(access_token)) {
+            throw new IllegalArgumentException("access_token error");
         }
         // 针对get和post等不同方法进行请求体获取
         String methodValue = serverHttpRequest.getMethodValue();

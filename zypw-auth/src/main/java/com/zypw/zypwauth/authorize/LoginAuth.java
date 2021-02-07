@@ -1,5 +1,6 @@
 package com.zypw.zypwauth.authorize;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zypw.zypwauth.mapper.AuthorizeMapper;
 import com.zypw.zypwcommon.entity.responseEntity.AxiosResult;
@@ -78,7 +79,9 @@ public class LoginAuth {
         log.info("access_token对应的信息：[userId:" + user.getUserId().toString() + "  <--->  token:" + access_token);
         // *生成refresh_token并保存--->//
         stringRedisTemplate.opsForValue().set(user.getUserId().toString() + "refresh_token", access_token + "refresh_token", 15L, TimeUnit.DAYS);
-        AxiosResult axiosResult = new AxiosResult(200, "登陆成功", access_token);
+        JSONObject token_date = new JSONObject();
+        token_date.put("access_token", access_token);
+        AxiosResult axiosResult = new AxiosResult(200, "登陆成功", token_date);
         return JSONObject.toJSONString(axiosResult);
     }
 
@@ -86,11 +89,15 @@ public class LoginAuth {
      * 退出处理
      */
     @PostMapping("/logout")
-    public String logoutHandle(@RequestParam("userId") String userId) {
+    public String logoutHandle(@RequestBody JSONObject jsonObject) {
+        String access_token = (String) jsonObject.get("access_token");
+        Long userId = JWTUtils.verify(access_token);
         AxiosResult axiosResult = null;
         //step0:如果userId为空，提示异常,否则删除用户的redis缓存信息即可
         if (userId != null) {
-            stringRedisTemplate.delete(userId);
+            // TODO: 2021-02-07 这里有个bug:redis的数据没有被删除掉？？还是可以看到的--->redis缓存序列化机制
+            stringRedisTemplate.delete(userId.toString());
+            stringRedisTemplate.delete(userId+"refresh_token");
             axiosResult = new AxiosResult(216, "退出成功", "");
         } else {
             axiosResult = new AxiosResult(215, "退出失败，用户状态异常", "");

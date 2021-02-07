@@ -39,4 +39,28 @@
            and t2.user_id = #{userId}
     </select>
 
+    <!--获取评论的子评论详情-->
+    <select id="getSubCommentsByCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select
+            distinct t1.*,
+            if(t2.valid_flag = 0,
+            0,
+            1) as "isCurrentUserFavorite"
+        from
+            (
+            select
+                thc.id as "id", tsu.avatar as "userAvatar", tsu.user_account as "username", thc.content as "commentContent", thc.comment_time as "commentTime", thc.favorite_count as "commentFavoriteCount"
+            from
+                t_homepage_comment thc
+            left join t_sys_user tsu on
+                thc.comment_owner = tsu.user_id
+                and tsu.alive_flag = 0
+            where
+                thc.parent_id = #{cid}) t1
+        left join t_homepage_favorite t2 on
+            t1.id = t2.comment_id
+            and t2.user_id =
+            #{userId}
+    </select>
+
 </mapper>

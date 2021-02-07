@@ -38,7 +38,9 @@ public class TokenController {
         // 生成新的token并保存
         String new_access_token = JWTUtils.sign(Long.parseLong(userId.toString()));
         stringRedisTemplate.opsForValue().set(userId.toString(), new_access_token,1L, TimeUnit.HOURS);
-        AxiosResult axiosResult = new AxiosResult(200,"更新token成功",new_access_token);
+        JSONObject refreshToken_date = new JSONObject();
+        refreshToken_date.put("new_access_token", new_access_token);
+        AxiosResult axiosResult = new AxiosResult(200,"更新token成功",refreshToken_date);
         return JSONObject.toJSONString(axiosResult);
     }
 

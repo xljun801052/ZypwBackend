@@ -4,7 +4,9 @@ package com.xlys.zypwhomepage.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xlys.zypwhomepage.domain.Article;
+import com.xlys.zypwhomepage.domain.Comment;
 import com.xlys.zypwhomepage.service.ArticleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +54,16 @@ public class ArticleController {
         List<HashMap<String, Object>> commentList = articleService.getAllArticleComments(id,userId);
         return JSONObject.toJSONString(commentList, SerializerFeature.WriteNullNumberAsZero);
     }
+
+    /**
+     * 根据文章评论ID获取子评论详情
+     * */
+    @RequestMapping("/subComments/{cid}")
+    public String getSubCommentsByCommentId(@PathVariable("cid") Integer cid) {
+        List<Comment> subCommentList = articleService.getSubCommentsByCommentId(cid);
+        System.out.println("subCommentList = " + subCommentList);
+        return JSONObject.toJSONString(subCommentList, SerializerFeature.WriteNullNumberAsZero);
+    }
+
 
 }

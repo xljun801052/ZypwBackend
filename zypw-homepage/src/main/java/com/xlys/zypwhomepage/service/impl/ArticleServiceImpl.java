@@ -33,4 +33,10 @@ public class ArticleServiceImpl implements ArticleService {
         List<HashMap<String, Object>> commentList = articleMapper.getAllArticleComments(aid,userId);
         return commentList;
     }
+
+    @Override
+    public List<Comment> getSubCommentsByCommentId(Integer cid) {
+        List<Comment> subCommentList = articleMapper.getSubCommentsByCommentId(cid);
+        return subCommentList;
+    }
 }
