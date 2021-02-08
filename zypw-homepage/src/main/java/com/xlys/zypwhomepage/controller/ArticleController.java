@@ -24,6 +24,8 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+
+    // TODO: 2021/2/2 @RequestMapping注解是既可以接收GET方法也可以接收POST方法吗？还是。。。？
     /**
      * 获取单个文章详情
      */
@@ -58,12 +60,15 @@ public class ArticleController {
     /**
      * 根据文章评论ID获取子评论详情
      * */
-    @RequestMapping("/subComments/{cid}")
-    public String getSubCommentsByCommentId(@PathVariable("cid") Integer cid) {
+    @RequestMapping("/subComments")
+    public String getSubCommentsByCommentId(@RequestBody JSONObject jsonObject) {
+        Integer cid = (Integer) jsonObject.get("parentId");
         List<Comment> subCommentList = articleService.getSubCommentsByCommentId(cid);
         System.out.println("subCommentList = " + subCommentList);
         return JSONObject.toJSONString(subCommentList, SerializerFeature.WriteNullNumberAsZero);
     }
+
+
 
 
 }

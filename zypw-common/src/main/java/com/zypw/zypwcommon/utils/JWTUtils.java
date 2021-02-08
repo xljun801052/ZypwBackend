@@ -49,6 +49,7 @@ public class JWTUtils {
 
     /**
      * 检验token是否正确
+     *
      * @param **token**
      * @return
      */
@@ -56,6 +57,8 @@ public class JWTUtils {
         try {
             Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
             JWTVerifier verifier = JWT.require(algorithm).build();
+            // TODO: 2021/2/7 有个BUG：这里access_token过了一会儿解析出来就是过期的：com.auth0.jwt.exceptions.TokenExpiredException: The Token has expired on Sun Feb 07 20:41:52 CST 2021.
+            // TODO: 2021/2/7 说明这里的工具类实际上是包含了过期设置，我们应该如何调整auth0的默认过期时间？？？
             DecodedJWT jwt = verifier.verify(token);
             Long userId = jwt.getClaim("userId").asLong();
             return userId;
@@ -63,4 +66,9 @@ public class JWTUtils {
             return 0L;
         }
     }
+
+    /*public static void main(String[] args) {
+        Long verify = verify("eyJUeXBlIjoiSnd0IiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJleHAiOjE2MTI3MDE3MTIsInVzZXJJZCI6MX0.EuNNxnEYqQ4Xg5i2lGOnZw_-TIRdXOjbB09_l_vDwhw");
+        System.out.println("verify = " + verify);
+    }*/
 }

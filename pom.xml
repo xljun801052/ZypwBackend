@@ -117,11 +117,8 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${zypwlombok.version}</version>
-            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 
