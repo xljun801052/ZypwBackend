@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/favorite")
-public class Favorite {
+public class FavoriteController {
 
     @Autowired
     private FavoriteService favoriteService;
@@ -22,7 +22,7 @@ public class Favorite {
     /**
      * 点赞状态变更
      */
-    @RequestMapping("change")
+    @RequestMapping("/change")
     public String changeFavorite(@RequestBody JSONObject jsonObject) {
         String commentId = (String) jsonObject.get("cid");
         Integer userId = (Integer) jsonObject.get("userId");

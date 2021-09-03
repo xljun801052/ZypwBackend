@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlys.zypwhomepage.mapper.FavoriteMapper">
+
+    <!--查询点赞记录-->
+    <select id="selectFavoriteStatus" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+        select user_id,comment_id,valid_flag from t_homepage_favorite where comment_id = #{commentId} and user_id= #{userId}
+    </select>
+
+    <!--修改点赞状态-->
+    <update id="changeFavorite" parameterType="java.lang.Integer">
+        update t_homepage_favorite set
+        <if test="favoriteStatus!=null">
+            <if test="favoriteStatus == 1">
+                valid_flag = 0
+            </if>
+            <if test="favoriteStatus == 0">
+                valid_flag = 1
+            </if>
+        </if>
+        where user_id=#{userId} and comment_id=#{commentId}
+    </update>
+
+    <!--新增点赞记录-->
+    <insert id="addNewFavorite" parameterType="java.lang.Integer">
+        insert into t_hoempage_favorite values (
+            comment_id = #{commentId},
+            user_id = #{userId},
+            valid_flag= 0,
+            create_time = now(),
+            modify_time = null
+        )
+    </insert>
+
+
+
+</mapper>
