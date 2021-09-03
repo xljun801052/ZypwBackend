@@ -21,6 +21,10 @@ import java.util.List;
 @RequestMapping("/article")
 public class ArticleController {
 
+    @RequestMapping("/ping")
+    public String ping() {
+        return "pong!";
+    }
     @Autowired
     private ArticleService articleService;
 

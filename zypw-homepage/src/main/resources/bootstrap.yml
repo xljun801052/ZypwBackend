@@ -1,8 +1,24 @@
+server:
+  port: 12020
 spring:
+  banner:
+    location: classpath:static/zypw.txt
+  application:
+    name: zypw-homepage-service
+  # todo: do research for the necessity of [spring.profiles.active] property for getting remote config! if so, when we try to change the profile, we shoudld change the bootstrap.yml config file???
+  profiles:
+    active: dev
   cloud:
     nacos:
+      # todo: how can I change the service namesapce when registry a service instance into nacos server???
+      # config server naming mechanism:
+      # ${spring.application.name}-${spring.profile.active}.${spring.cloud.nacos.config.file-extension}
+      # zypw-homepage-service-dev.yaml
       config:
-        # 应用配置中心
-        server-addr: 127.0.0.1:8848
-        # 配置文件格式：yml【目前仅支持properties、yml两种】
-        file-extension: yml
+        # config server cluster address
+        server-addr: 139.9.121.3:8847,139.9.121.3:8848,139.9.121.3:8849
+        # file extension type：yaml【Nacos only support two types util now: properties、yaml】
+        # Note that 'yaml' can't be replaced by 'yml'!
+        file-extension: yaml
+        group: HOMEPAGE_DEV_GROUP
+        namespace: 616da8fb-af84-41d7-91f6-3ff71d2c68ec

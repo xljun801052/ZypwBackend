@@ -1,5 +1,6 @@
 package com.xlys.zypwhomepage.service.impl;
 
+import com.xlys.zypwhomepage.mapper.FavoriteMapper;
 import com.xlys.zypwhomepage.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ public class FavoriteServiceImpl implements FavoriteService {
         Map<String, String> queryResult = favoriteMapper.selectFavoriteStatus(commentId, userId);
         if (queryResult.get("isAlreadyFavorite").equalsIgnoreCase("")) {
             favoriteMapper.changeFavorite(commentId, userId);
-        }else if (queryResult.get("isAlreadyFavorite").equalsIgnoreCase("true"))
-        return null;
+        } else if (queryResult.get("isAlreadyFavorite").equalsIgnoreCase("true")) {
+            return null;
+        }
+            return null;
     }
 }

@@ -1,8 +1,21 @@
+#server:
+#  port: 12019
 spring:
+  banner:
+    location: static/zypw.txt
+  application:
+    name: zypw-gateway-service
+  profiles:
+    active: dev
   cloud:
     nacos:
       config:
-        # 配置中心
-        server-addr: 127.0.0.1:8848
-        # 配置文件格式：yml【目前仅支持properties、yml两种】
-        file-extension: yml
+        # config server cluster address
+        # todo: Bug report! the application start with nacos server address [127.0.0.1:8848], not the Nacos cluster address configuration that listed below.
+        # Bug solved report! the local build cache results in the wrong spring.application.name value--->can't get the right configuration
+        server-addr: 139.9.121.3:8847,139.9.121.3:8848,139.9.121.3:8849
+        # file extension type：yaml【Nacos only support two types util now: properties、yaml】
+        file-extension: yaml
+        group: GATEWAY_DEV_GROUP
+        namespace: 0abe22b3-2c65-48d7-9f0c-f29dc6d22247
+

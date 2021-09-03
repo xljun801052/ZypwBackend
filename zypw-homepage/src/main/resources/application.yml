@@ -1,4 +1,0 @@
-spring:
-  profiles:
-    # Spring Boot中多环境配置文件名需要满足application-{profile}.yml的格式
-    active: dev
