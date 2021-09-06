@@ -1,8 +1,12 @@
 spring:
+  application:
+    name: zypw-auth-service
+  profiles:
+    active: dev
   cloud:
     nacos:
       config:
-        # 应用配置中心
-        server-addr: 127.0.0.1:8848
-        # 配置文件格式：yml【目前仅支持properties、yml两种】
-        file-extension: yml
+        server-addr: 139.9.121.3:8847,139.9.121.3:8848,139.9.121.3:8849
+        file-extension: yaml
+        group: AUTH_DEV_GROUP
+        namespace: c9636856-6b0b-41a2-bd94-fda8bbdab355

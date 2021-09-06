@@ -1,4 +1,4 @@
-package com.zypw.zypwgateway.client;
+package com.zypw.zypwgateway.microservicesclient;
 
 import com.zypw.zypwcommon.feignClient.HomepageClient;
 import org.springframework.beans.factory.annotation.Autowired;

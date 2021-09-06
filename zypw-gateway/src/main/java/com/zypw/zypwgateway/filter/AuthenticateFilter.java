@@ -21,12 +21,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * 自定义全局过滤器：进行token验证
+ * 自定义全局过滤器：访问拦截并交由auth进行认证
  */
 @Component
 @CrossOrigin
 @Slf4j
-public class AuthorizeFilter implements GlobalFilter, Ordered {
+public class AuthenticateFilter implements GlobalFilter, Ordered {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -39,13 +39,16 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
         String uri = serverHttpRequest.getURI().getPath();
 
+        log.info("Filter:[ {} ] is working...",this.getClass().getSimpleName());
+
         // TODO: 2021-02-04 这里有个BUG：每次首次登录时候都是下游服务有问题，然后503 Service Unavailable ，待解决一下！应该和网关与服务启动顺序是否有关？
         // 第二次再请求前台还是503错误，但是实际上已经验证成功生成了token并存放到了redis中了！
         // step1:进行uri白名单校验，如果在白名单中，则不进行token认证，直接通过
-        if (uri.indexOf("/login") >= 0 || uri.indexOf("/logout") >= 0) {
+        if (uri.contains("/login") || uri.contains("/logout")) {
+            log.info("The current request url: {}",uri);
             return chain.filter(exchange);
         }
-        System.out.println("global-filter is working...");
+
 
         // step2：对于不在白名单中且需要进行token验证的请求进行token验证
         String access_token = serverHttpRequest.getHeaders().getFirst("access_token");

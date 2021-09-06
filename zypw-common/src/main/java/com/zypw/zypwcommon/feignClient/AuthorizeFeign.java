@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 //import javax.servlet.http.HttpServletRequest;
 
-@FeignClient(value = "auth-service")
+@FeignClient(value = "zypw-auth-service")
 public interface AuthorizeFeign {
 
     @PostMapping("/login")

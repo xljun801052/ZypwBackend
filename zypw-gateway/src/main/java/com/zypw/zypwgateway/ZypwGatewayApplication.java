@@ -11,9 +11,39 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 /**
- * gateway网关服务：本系统目前只使用两个功能
- * 1、权限认证(JWT)
- * 2、统一路由跳转
+ * Gateway Functionalities:
+ *  Normal Use Cases
+ *      ①HTTP Request
+ *      ②HTTP Response
+ *      ③Path
+ *      ④Request Size Limit
+ *      ⑤Related to HTTP Status
+ *  Advanced Use Cases
+ *      ①Request Rate Limiter
+ *      ②Save Session and Secure Headers
+ *      ③Retry
+ *      ④Circuit Breaker
+ *
+ *  Current used:
+ *      ①JWT
+ *      ②Path: It is possible to set a different path (SetPath), rewrite (RewritePath), add a prefix (PrefixPath), and strip (StripPrefix) to extract only parts of it.
+ *
+ *  Integration with Spring-Security:
+ *      spring security设置要采用响应式配置，基于WebFlux中WebFilter实现，与Spring MVC的Security是通过Servlet的Filter实现类似，也是一系列filter组成的过滤链。
+ *      Reactor与传统MVC配置对应：
+ *
+ *      webflux	                                            mvc	                                作用
+ *
+ *      @EnableWebFluxSecurity                              @EnableWebSecurity	                开启security配置
+ *      ServerAuthenticationSuccessHandler	                AuthenticationSuccessHandler	    登录成功Handler
+ *      ServerAuthenticationFailureHandler	                AuthenticationFailureHandler	    登陆失败Handler
+ *      ReactiveAuthorizationManager<AuthorizationContext>	AuthorizationManager	            认证管理
+ *      ServerSecurityContextRepository	                    SecurityContextHolder	            认证信息存储管理
+ *      ReactiveUserDetailsService	                        UserDetailsService	                用户登录
+ *      ReactiveAuthorizationManager	                    AccessDecisionManager	            鉴权管理
+ *      ServerAuthenticationEntryPoint	                    AuthenticationEntryPoint	        未认证Handler
+ *      ServerAccessDeniedHandler	                        AccessDeniedHandler	                鉴权失败Handler
+ *
  */
 
 @SpringBootApplication

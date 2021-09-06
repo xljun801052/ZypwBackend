@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class LoginAuth {
 
     /**
-     * Redis更新变化：spring boos 1.x使用jedis作为redisTemplate的客户端。spring boot 2.x使用lettuce作为redisTemplate的客户端。
+     * Redis更新变化：spring boot 1.x使用jedis作为redisTemplate的客户端。spring boot 2.x使用lettuce作为redisTemplate的客户端。
      * Lettuce 和 Jedis 都是Redis的client，所以他们都可以连接 Redis Server。
      * Jedis在实现上是直接连接的Redis Server，如果在多线程环境下是非线程安全的。
      * 每个线程都去拿自己的 Jedis 实例，当连接数量增多时，资源消耗阶梯式增大，连接成本就较高了。
