@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
  * 并把包装后的请求放到过滤器链中传递下去。这样后面的过滤器中再使用exchange.getRequest().getBody()来获取body时，
  * 实际上就是调用的重载后的getBody方法，获取的最先已经缓存了的body数据。这样就能够实现body的多次读取了。
  */
-@Component
+//@Component
 public class CachedBodyFilter implements Ordered, GlobalFilter {
 
 //  public static final String CACHE_REQUEST_BODY_OBJECT_KEY = "cachedRequestBodyObject";

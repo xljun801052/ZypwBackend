@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  * Gateway全局过滤器--修改请求参数过滤器：
  * 1、添加userId
  */
-@Component
+//@Component
 @CrossOrigin
 @Slf4j
 public class ModifyRequestFilter implements GlobalFilter, Ordered {

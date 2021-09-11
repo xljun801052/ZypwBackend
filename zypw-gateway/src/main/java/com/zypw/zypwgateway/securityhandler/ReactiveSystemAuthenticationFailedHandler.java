@@ -16,16 +16,17 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * handle the case: when does not pass the authentication!
+ * handle when authenticate fail!
  * */
 @Component
-public class JsonServerAuthenticationFailureHandler implements ServerAuthenticationFailureHandler {
+public class ReactiveSystemAuthenticationFailedHandler implements ServerAuthenticationFailureHandler {
 
-    private static final String USER_NOT_EXISTS = "用户不存在！";
 
-    private static final String USERNAME_PASSWORD_ERROR = "用户密码错误！";
+    private static final String USER_NOT_EXISTS = "Current user doesn't exist！";
 
-    private static final String USER_LOCKED = "用户锁定！";
+    private static final String USERNAME_PASSWORD_ERROR = "Invalid username or password！";
+
+    private static final String USER_LOCKED = "Current user is locked！";
 
     @Override
     public Mono<Void> onAuthenticationFailure(WebFilterExchange webFilterExchange, AuthenticationException exception) {
@@ -43,7 +44,6 @@ public class JsonServerAuthenticationFailureHandler implements ServerAuthenticat
 
     private Mono<Void> writeErrorMessage(ServerHttpResponse response, String message) {
         String result = JSONObject.toJSONString(AxiosResult.error(message));
-        DataBuffer buffer = response.bufferFactory().wrap(result.getBytes(CharsetUtil.UTF_8));
-        return response.writeWith(Mono.just(buffer));
+        return response.writeWith(Mono.just(response.bufferFactory().wrap(result.getBytes(CharsetUtil.UTF_8))));
     }
 }

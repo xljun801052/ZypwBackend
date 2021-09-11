@@ -14,15 +14,17 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * for alert user to input the info to authenticate!
+ * */
 @Component
-public class AuthenticationEntryPointHandler implements ServerAuthenticationEntryPoint {
-
+public class ReactiveSystemAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException e) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-        String body = JSONObject.toJSONString(AxiosResult.error(e.getMessage()));
+        String body = JSONObject.toJSONString(AxiosResult.error("authentication failure!"));
         DataBuffer wrap = exchange.getResponse().bufferFactory().wrap(body.getBytes(CharsetUtil.UTF_8));
         return exchange.getResponse().writeWith(Flux.just(wrap));
     }

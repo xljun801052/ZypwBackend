@@ -48,61 +48,61 @@ public class LoginAuth {
     /**
      * 登录认证处理
      */
-    @PostMapping("/login")
-    public String loginAuth(@RequestBody String jsonData) {
-
-        // 拿到用户登录信息参数
-        // TODO: 2021/1/24 此处必须保证账号是唯一的，否则不能根据账户名来查询
-        JSONObject data = (JSONObject) JSONObject.parse(jsonData);
-        String username = data.get("username").toString();
-        String password = data.get("password").toString();
-        log.info("用户参数信息--》唯一账户:" + username + ",密码:" + password);
-        // 比对数据库的用户名和密码信息，一致则予以登录成功，否则返回失败信息
-        User user = authorizeMapper.findUserInfoByUsername(username);
-        if (user == null) {
-            AxiosResult axiosResult = new AxiosResult(201, "用户不存在", "");
-            return JSONObject.toJSONString(axiosResult);
-            // TODO: 2021-01-22 这里的密码需要使用md5加密加盐处理，不可以直接使用原生明文密码
-        } else if (!user.getPassword().equals(password)) {
-            AxiosResult axiosResult = new AxiosResult(202, "密码错误", "");
-            return JSONObject.toJSONString(axiosResult);
-        }
-        // *登录成功生成access_token和refresh_token并返回，同时将用户数据和refresh_token【每个用户的refresh_token唯一】放入Redis缓存中，为了安全需要设置过期时间,且access_token过期时间比refresh_token短。
-        // *这里有几种做法，可以评估一下：
-        //      ①将refresh_token和access_token一起存储，这样只需要一次redis链接操作--->不可行，access_token过期了，refresh_token也没了
-        //      ②将access_token，refresh_tokenf分别单独存储，过期时间也不一样--->问题是？这两个token怎么能与同一用户关联【要是redis可以做到一个map中部分信息过期就好了？研究一下】
-        //            首先要保证key唯一：分布式中的雪花算法不适用，hash算法是否已经够用，和md5有啥性能区别吗？貌似账户就可以，因为账户名就是唯一的啊，这里先不考虑加密算法安全问题
-        //            同时要保证refresh_token和access_token都存在不能覆盖且有关联--->考虑根据唯一性KEY生成另一个唯一性KEY:我们用账户名字面量+"refresh_token"来生成！
-        // *生成access_token并保存,生产上设置1hours过期，必须重新登录。主流网站的token过期时间，一般不超过1h。
-        String access_token = JWTUtils.sign(Long.parseLong(user.getUserId().toString()));
-        stringRedisTemplate.opsForValue().set(user.getUserId().toString(), access_token, 1L, TimeUnit.HOURS);
-        log.info("access_token对应的信息：[userId:" + user.getUserId().toString() + "  <--->  token:" + access_token);
-        // *生成refresh_token并保存--->//
-        stringRedisTemplate.opsForValue().set(user.getUserId().toString() + "refresh_token", access_token + "refresh_token", 15L, TimeUnit.DAYS);
-        JSONObject token_date = new JSONObject();
-        token_date.put("access_token", access_token);
-        AxiosResult axiosResult = new AxiosResult(200, "登陆成功", token_date);
-        return JSONObject.toJSONString(axiosResult);
-    }
-
-    /**
-     * 退出处理
-     */
-    @PostMapping("/logout")
-    public String logoutHandle(@RequestBody JSONObject jsonObject) {
-        String access_token = (String) jsonObject.get("access_token");
-        Long userId = JWTUtils.verify(access_token);
-        AxiosResult axiosResult = null;
-        //step0:如果userId为空，提示异常,否则删除用户的redis缓存信息即可
-        if (userId != null) {
-            // TODO: 2021-02-07 这里有个bug:redis的数据没有被删除掉？？还是可以看到的--->redis缓存序列化机制
-            stringRedisTemplate.delete(userId.toString());
-            stringRedisTemplate.delete(userId+"refresh_token");
-            axiosResult = new AxiosResult(216, "退出成功", "");
-        } else {
-            axiosResult = new AxiosResult(215, "退出失败，用户状态异常", "");
-        }
-        return JSONObject.toJSONString(axiosResult);
-    }
+////    @PostMapping("/login")
+////    public String loginAuth(@RequestBody String jsonData) {
+////
+////        // 拿到用户登录信息参数
+////        // TODO: 2021/1/24 此处必须保证账号是唯一的，否则不能根据账户名来查询
+////        JSONObject data = (JSONObject) JSONObject.parse(jsonData);
+////        String username = data.get("username").toString();
+////        String password = data.get("password").toString();
+////        log.info("用户参数信息--》唯一账户:" + username + ",密码:" + password);
+////        // 比对数据库的用户名和密码信息，一致则予以登录成功，否则返回失败信息
+////        User user = authorizeMapper.findUserInfoByUsername(username);
+////        if (user == null) {
+////            AxiosResult axiosResult = new AxiosResult(201, "用户不存在", "");
+////            return JSONObject.toJSONString(axiosResult);
+////            // TODO: 2021-01-22 这里的密码需要使用md5加密加盐处理，不可以直接使用原生明文密码
+////        } else if (!user.getPassword().equals(password)) {
+////            AxiosResult axiosResult = new AxiosResult(202, "密码错误", "");
+////            return JSONObject.toJSONString(axiosResult);
+////        }
+////        // *登录成功生成access_token和refresh_token并返回，同时将用户数据和refresh_token【每个用户的refresh_token唯一】放入Redis缓存中，为了安全需要设置过期时间,且access_token过期时间比refresh_token短。
+////        // *这里有几种做法，可以评估一下：
+////        //      ①将refresh_token和access_token一起存储，这样只需要一次redis链接操作--->不可行，access_token过期了，refresh_token也没了
+////        //      ②将access_token，refresh_tokenf分别单独存储，过期时间也不一样--->问题是？这两个token怎么能与同一用户关联【要是redis可以做到一个map中部分信息过期就好了？研究一下】
+////        //            首先要保证key唯一：分布式中的雪花算法不适用，hash算法是否已经够用，和md5有啥性能区别吗？貌似账户就可以，因为账户名就是唯一的啊，这里先不考虑加密算法安全问题
+////        //            同时要保证refresh_token和access_token都存在不能覆盖且有关联--->考虑根据唯一性KEY生成另一个唯一性KEY:我们用账户名字面量+"refresh_token"来生成！
+////        // *生成access_token并保存,生产上设置1hours过期，必须重新登录。主流网站的token过期时间，一般不超过1h。
+////        String access_token = JWTUtils.sign(Long.parseLong(user.getUserId().toString()));
+////        stringRedisTemplate.opsForValue().set(user.getUserId().toString(), access_token, 1L, TimeUnit.HOURS);
+////        log.info("access_token对应的信息：[userId:" + user.getUserId().toString() + "  <--->  token:" + access_token);
+////        // *生成refresh_token并保存--->//
+////        stringRedisTemplate.opsForValue().set(user.getUserId().toString() + "refresh_token", access_token + "refresh_token", 15L, TimeUnit.DAYS);
+////        JSONObject token_date = new JSONObject();
+////        token_date.put("access_token", access_token);
+////        AxiosResult axiosResult = new AxiosResult(200, "登陆成功", token_date);
+////        return JSONObject.toJSONString(axiosResult);
+////    }
+//
+//    /**
+//     * 退出处理
+//     */
+////    @PostMapping("/logout")
+////    public String logoutHandle(@RequestBody JSONObject jsonObject) {
+////        String access_token = (String) jsonObject.get("access_token");
+////        Long userId = JWTUtils.verify(access_token);
+////        AxiosResult axiosResult = null;
+////        //step0:如果userId为空，提示异常,否则删除用户的redis缓存信息即可
+////        if (userId != null) {
+////            // TODO: 2021-02-07 这里有个bug:redis的数据没有被删除掉？？还是可以看到的--->redis缓存序列化机制
+////            stringRedisTemplate.delete(userId.toString());
+////            stringRedisTemplate.delete(userId+"refresh_token");
+////            axiosResult = new AxiosResult(216, "退出成功", "");
+////        } else {
+////            axiosResult = new AxiosResult(215, "退出失败，用户状态异常", "");
+////        }
+////        return JSONObject.toJSONString(axiosResult);
+////    }
 
 }

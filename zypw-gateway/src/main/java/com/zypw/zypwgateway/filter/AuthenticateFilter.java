@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 /**
  * 自定义全局过滤器：访问拦截并交由auth进行认证
  */
-@Component
+//@Component
 @CrossOrigin
 @Slf4j
 public class AuthenticateFilter implements GlobalFilter, Ordered {

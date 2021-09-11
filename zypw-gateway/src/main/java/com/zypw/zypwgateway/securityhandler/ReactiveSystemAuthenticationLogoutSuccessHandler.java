@@ -14,17 +14,19 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
- * handle the case: when logout successfully!
+ * handle when logout success!
  * */
 @Component
-public class JsonServerLogoutSuccessHandler implements ServerLogoutSuccessHandler {
+public class ReactiveSystemAuthenticationLogoutSuccessHandler implements ServerLogoutSuccessHandler {
+
     @Override
     public Mono<Void> onLogoutSuccess(WebFilterExchange exchange, Authentication authentication) {
         ServerHttpResponse response = exchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-        String result = JSONObject.toJSONString(AxiosResult.success("注销成功",null));
+        String result = JSONObject.toJSONString(AxiosResult.success("Logout Successfully!"));
         DataBuffer buffer = response.bufferFactory().wrap(result.getBytes(CharsetUtil.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }
+
 }

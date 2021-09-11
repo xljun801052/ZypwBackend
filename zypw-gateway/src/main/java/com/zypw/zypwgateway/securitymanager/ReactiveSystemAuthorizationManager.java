@@ -14,9 +14,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 
+/**
+ * Implementation of ReactiveAuthorizationManager for Authorization!
+ * */
 @Component
 @Slf4j
-public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+public class ReactiveSystemAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
