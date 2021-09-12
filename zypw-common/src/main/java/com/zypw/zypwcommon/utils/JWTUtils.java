@@ -2,7 +2,6 @@ package com.zypw.zypwcommon.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
@@ -36,6 +35,7 @@ public class JWTUtils {
             header.put("Type", "Jwt");
             header.put("alg", "HS256");
             // 返回token字符串
+            // TODO: 2021/9/12 token needs to be put in more info! not only a userId!
             return JWT.create()
                     .withHeader(header)
                     .withClaim("userId", userId)

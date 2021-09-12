@@ -14,8 +14,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,7 +22,7 @@ import reactor.core.publisher.Mono;
  * 自定义全局过滤器：访问拦截并交由auth进行认证
  */
 //@Component
-@CrossOrigin
+//@CrossOrigin
 @Slf4j
 public class AuthenticateFilter implements GlobalFilter, Ordered {
 
@@ -104,7 +102,7 @@ public class AuthenticateFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -100;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
 }

@@ -8,15 +8,12 @@ import com.zypw.zypwgateway.securityhandler.ReactiveSystemAuthenticationLogoutSu
 import com.zypw.zypwgateway.securityhandler.ReactiveSystemAuthenticationSuccessHandler;
 import com.zypw.zypwgateway.securitymanager.ReactiveSystemAuthenticationManager;
 import com.zypw.zypwgateway.securitymanager.ReactiveSystemAuthorizationManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -24,14 +21,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.ServerFormLoginAuthenticationConverter;
-import org.springframework.security.web.server.authentication.ServerHttpBasicAuthenticationConverter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
+/**
+ * Note: different filter chain is used to protect different types of resources!
+ * We configure multiple SecurityWebFilterChain instances to separate configuration by RequestMatcher[s].
+ * A security filter chain (or, equivalently, a WebSecurityConfigurerAdapter) has a request matcher that is used to decide whether to apply it to an HTTP request.
+ * <p>
+ * One of the easiest mistakes to make when configuring Spring Security is to forget that these matchers
+ * apply to different processes. One is a request matcher for the whole filter chain, and the other is only to choose the access rule to apply.
+ * <p>
+ * So the order of each filter chain is very important.for multiple webFilterChains.Note:the less the order number is, the higher precedence the chains should be considered.
+ * Each set of resources has its own WebSecurityConfigurerAdapter with a unique order and its own request matcher.
+ * If the matching rules overlap, the earliest ordered filter chain wins.
+ */
 @Configuration
 @EnableWebFluxSecurity
 public class SystemWebFluxSecurityConfig {
@@ -61,12 +71,18 @@ public class SystemWebFluxSecurityConfig {
     private ReactiveSystemAuthenticationLogoutSuccessHandler logoutSuccessHandler;
 
 
+    // TODO: 2021/9/12 add to configuration
     private static final String[] AUTH_WHITELIST = new String[]{"/login", "/logout"};
 
+    /**
+     * filter chain to protect web api resources!
+     */
+    @Order(HIGHEST_PRECEDENCE)
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain webSecurityFilterChain(ServerHttpSecurity http) {
         SecurityWebFilterChain chain =
                 http
+                        .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/login"))
                         .csrf().disable()
                         .httpBasic().disable()
                         .authenticationManager(authenticationManager)
@@ -113,19 +129,27 @@ public class SystemWebFluxSecurityConfig {
 
     // for multiple webFilterChains.Note:the less the order number is, the higher precedence the chains should be considered.
     // Spring Security will select one SecurityWebFilterChain for each request. It will match the requests in order by the securityMatcher definition
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
-//    @Bean
-//    SecurityWebFilterChain apiHttpSecurity(ServerHttpSecurity http) {
-//        http
-//                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
-//                .authorizeExchange((exchanges) -> exchanges.anyExchange().authenticated())
+
+    /**
+     * filter chain to do protect web security!
+     */
+    @Order(HIGHEST_PRECEDENCE + 10)
+    @Bean
+    SecurityWebFilterChain apiHttpSecurity(ServerHttpSecurity http) {
+        http
+                .csrf().disable()
+                .httpBasic().disable()
+                // set the match configuration for current filter chain
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**", HttpMethod.POST))
+                .addFilterAt(new WebTokenFilter(), SecurityWebFiltersOrder.FIRST);
 //                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
-//        return http.build();
-//    }
+        return http.build();
+    }
 
 
     /**
      * set BCryptPasswordEncoder to secure the  rawPassword
+     *
      * @return
      */
     @Bean

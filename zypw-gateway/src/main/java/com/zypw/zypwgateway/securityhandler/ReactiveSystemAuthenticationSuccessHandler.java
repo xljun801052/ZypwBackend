@@ -1,6 +1,5 @@
 package com.zypw.zypwgateway.securityhandler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zypw.zypwcommon.entity.authEntity.AuthUser;
 import com.zypw.zypwcommon.entity.responseEntity.AxiosResult;
@@ -44,7 +43,6 @@ public class ReactiveSystemAuthenticationSuccessHandler implements ServerAuthent
         ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-        response.getHeaders().set(HttpHeaders.CACHE_CONTROL, "no-store,no-cache,must-revalidate,max-age-8");
         DataBuffer buffer = null;
         try {
             // TODO: 2021/9/11 create the access_token and refresh_token  and save them to redis
@@ -54,8 +52,10 @@ public class ReactiveSystemAuthenticationSuccessHandler implements ServerAuthent
                 AuthUser user = (AuthUser) authentication.getPrincipal();
                 String access_token = JWTUtils.sign(Long.parseLong(user.getId().toString()));
                 if (Objects.nonNull(access_token)) {
-                    stringRedisTemplate.opsForValue().set(user.getId().toString(), access_token, 1L, TimeUnit.HOURS);
+                    // TODO: 2021/9/12 access_token storage needs a more complex key!
+                    stringRedisTemplate.opsForValue().set(user.getId().toString()+"access_token", access_token, 1L, TimeUnit.HOURS);
                     log.info("access_token info：[userId:" + user.getId() + "  <--->  token:" + access_token);
+                    // TODO: 2021/9/12 refresh_token needs to be a little more complex!
                     stringRedisTemplate.opsForValue().set(user.getId() + "_refresh_token", access_token + "refresh_token", 15L, TimeUnit.DAYS);
                     Map<String, Object> token_info = new HashMap<String, Object>();
                     token_info.put("access_token", access_token);
