@@ -1,7 +1,6 @@
 package com.zypw.zypwgateway.config;
 
 
-import com.zypw.zypwgateway.filter.WebTokenFilter;
 import com.zypw.zypwgateway.securityhandler.ReactiveSystemAuthenticationEntryPoint;
 import com.zypw.zypwgateway.securityhandler.ReactiveSystemAuthenticationFailedHandler;
 import com.zypw.zypwgateway.securityhandler.ReactiveSystemAuthenticationLogoutSuccessHandler;
@@ -15,7 +14,6 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -94,23 +92,22 @@ public class SystemWebFluxSecurityConfig {
                                     return swe.getResponse().writeWith(Mono.just(new DefaultDataBufferFactory().wrap("you are forbidden to access!".getBytes(StandardCharsets.UTF_8))));
                                 }
                         )
-                        .and()
+                    .and()
                         .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                         .authorizeExchange()
                         .pathMatchers(AUTH_WHITELIST).permitAll()
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .anyExchange()
-                        .authenticated()
-                        .and()
+                        .anyExchange().authenticated()
+                    .and()
                         .formLogin()
                         .loginPage("/login")
                         .authenticationSuccessHandler(authenticationSuccessHandler)
                         .authenticationFailureHandler(authenticationFailureHandler)
-                        .and()
+                    .and()
                         .logout()
                         .logoutUrl("/logout")
                         .logoutSuccessHandler(logoutSuccessHandler)
-                        .and()
+                    .and()
 //                .addFilterAt(new WebTokenFilter(), SecurityWebFiltersOrder.HTTP_BASIC) // add token filter
                         .build();
 
@@ -133,18 +130,18 @@ public class SystemWebFluxSecurityConfig {
     /**
      * filter chain to do protect web security!
      */
-    @Order(HIGHEST_PRECEDENCE + 10)
-    @Bean
-    SecurityWebFilterChain apiHttpSecurity(ServerHttpSecurity http) {
-        http
-                .csrf().disable()
-                .httpBasic().disable()
-                // set the match configuration for current filter chain
-                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**", HttpMethod.POST))
-                .addFilterAt(new WebTokenFilter(), SecurityWebFiltersOrder.FIRST);
-//                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
-        return http.build();
-    }
+//    @Order(HIGHEST_PRECEDENCE)
+//    @Bean
+//    SecurityWebFilterChain apiHttpSecurity(ServerHttpSecurity http) {
+//        http
+//                .csrf().disable()
+//                .httpBasic().disable()
+//                // set the match configuration for current filter chain
+//                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**", HttpMethod.POST))
+//                .addFilterAt(new WebTokenFilter(), SecurityWebFiltersOrder.FIRST);
+////                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
+//        return http.build();
+//    }
 
 
     /**

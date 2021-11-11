@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 
@@ -22,9 +20,6 @@ import javax.annotation.Resource;
 @Component
 @Slf4j
 public class ReactiveSystemAuthenticationManager implements ReactiveAuthenticationManager {
-
-    // for what???
-    private Scheduler scheduler = Schedulers.parallel();
 
     private PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -38,17 +33,16 @@ public class ReactiveSystemAuthenticationManager implements ReactiveAuthenticati
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         final String userAccount = authentication.getName();
-        final String presentedPassword = (String) authentication.getCredentials();
+        final String rawPassword = (String) authentication.getCredentials();
         try {
             return this.userDetailsService.findByUsername(userAccount)
-                    .publishOn(this.scheduler)
-                    .filter(u -> this.passwordEncoder.matches(presentedPassword, u.getPassword()))
+                    .filter(u -> this.passwordEncoder.matches(rawPassword, u.getPassword()))
                     .switchIfEmpty(Mono.defer(() -> Mono.error(new BadCredentialsException("Invalid Credentials"))))
                     .flatMap(u -> {
                         boolean upgradeEncoding = this.userDetailsService != null
                                 && this.passwordEncoder.upgradeEncoding(u.getPassword());
                         if (upgradeEncoding) {
-                            String newPassword = this.passwordEncoder.encode(presentedPassword);
+                            String newPassword = this.passwordEncoder.encode(rawPassword);
                             return this.userDetailsService.updatePassword(u, newPassword);
                         }
                         return Mono.just(u);
@@ -64,11 +58,6 @@ public class ReactiveSystemAuthenticationManager implements ReactiveAuthenticati
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         Assert.notNull(passwordEncoder, "passwordEncoder cannot be null");
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public void setScheduler(Scheduler scheduler) {
-        Assert.notNull(scheduler, "scheduler cannot be null");
-        this.scheduler = scheduler;
     }
 
 }

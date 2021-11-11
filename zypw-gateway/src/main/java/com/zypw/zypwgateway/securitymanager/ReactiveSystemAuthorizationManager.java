@@ -6,7 +6,6 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
@@ -19,14 +18,13 @@ import java.util.Collection;
  * */
 @Component
 @Slf4j
-public class ReactiveSystemAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+public class ReactiveSystemAuthorizationManager implements ReactiveAuthorizationManager<ServerWebExchange> {
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @Override
-    public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, AuthorizationContext authorizationContext) {
+    public Mono<AuthorizationDecision> check(Mono<Authentication> authentication, ServerWebExchange exchange) {
         return authentication.map(auth -> {
-            ServerWebExchange exchange = authorizationContext.getExchange();
             ServerHttpRequest request = exchange.getRequest();
             Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
             for (GrantedAuthority authority : authorities) {
@@ -43,4 +41,8 @@ public class ReactiveSystemAuthorizationManager implements ReactiveAuthorization
         }).defaultIfEmpty(new AuthorizationDecision(false));
     }
 
+    @Override
+    public Mono<Void> verify(Mono<Authentication> authentication, ServerWebExchange object) {
+        return ReactiveAuthorizationManager.super.verify(authentication, object);
+    }
 }

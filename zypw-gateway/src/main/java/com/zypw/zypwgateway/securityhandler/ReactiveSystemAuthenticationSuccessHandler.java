@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,6 +36,9 @@ public class ReactiveSystemAuthenticationSuccessHandler implements ServerAuthent
     @Resource
     private ObjectMapper objectMapper;
 
+    private static final String TOKEN_PREFIX = "zypw:";
+    private static final String REFRESH_TOKEN = "refresh_token";
+
     @SneakyThrows
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
@@ -45,21 +47,19 @@ public class ReactiveSystemAuthenticationSuccessHandler implements ServerAuthent
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
         DataBuffer buffer = null;
         try {
-            // TODO: 2021/9/11 create the access_token and refresh_token  and save them to redis
             // generate token and return it. Here we put a temporary fake token.
             // Note: the sensitive info can not be passed to user! use the objectMapper to serialize it!
             if (authentication.getPrincipal() instanceof AuthUser) {
                 AuthUser user = (AuthUser) authentication.getPrincipal();
                 String access_token = JWTUtils.sign(Long.parseLong(user.getId().toString()));
-                if (Objects.nonNull(access_token)) {
-                    // TODO: 2021/9/12 access_token storage needs a more complex key!
-                    stringRedisTemplate.opsForValue().set(user.getId().toString()+"access_token", access_token, 1L, TimeUnit.HOURS);
+                if (access_token!=null) {
+
+                    stringRedisTemplate.opsForValue().set(TOKEN_PREFIX+user.getId(), access_token, 1L, TimeUnit.HOURS);
                     log.info("access_token info：[userId:" + user.getId() + "  <--->  token:" + access_token);
-                    // TODO: 2021/9/12 refresh_token needs to be a little more complex!
-                    stringRedisTemplate.opsForValue().set(user.getId() + "_refresh_token", access_token + "refresh_token", 15L, TimeUnit.DAYS);
+                    stringRedisTemplate.opsForValue().set(user.getId() + "_refresh_token", access_token + REFRESH_TOKEN, 15L, TimeUnit.DAYS);
                     Map<String, Object> token_info = new HashMap<String, Object>();
                     token_info.put("access_token", access_token);
-                    token_info.put("refresh_token", access_token + "refresh_token");
+                    token_info.put("refresh_token", access_token + REFRESH_TOKEN);
                     buffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(AxiosResult.success(token_info)));
                 } else {
                     byte[] errorMsg = "error occurs when generate access_token, access_token can not be null!".getBytes(StandardCharsets.UTF_8);

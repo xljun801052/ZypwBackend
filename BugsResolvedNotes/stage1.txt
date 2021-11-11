@@ -1,0 +1,5 @@
+Q001：使用@Autowired/@Resource在一个非Spring的component中注入StringRedisTemplate,拿到的结果为null.
+    https://stackoverflow.com/questions/32494398/unable-to-autowire-the-service-inside-my-authentication-filter-in-spring?answertab=votes#tab-top
+    这里我用二次赋值解决了。因为ServerWebExchange携带了IOC容器~我就直接那了。但是这样一个会不会太重量级了，二个，这个redis模板为null到底是什么原因导致的？加载顺序？还是filter本身的问题？
+
+Q002:
