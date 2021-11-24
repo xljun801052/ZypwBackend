@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,9 +32,9 @@ public class TokenController {
         // 请求这个接口时说明access_token已经过期了,我们的目的就是要认证(变相做登录)成功之后重新给个access_token
         // --->这个说明referesh_token中必须要有认证的数据！这里以用户账号为key即可，暂不考虑安全问题
         String access_token = (String) jsonObject.get("access_token");
-        Long userId = JWTUtils.verify(access_token);
+        Integer userId = JWTUtils.verify(access_token);
         // 生成新的token并保存
-        String new_access_token = JWTUtils.sign(Long.parseLong(userId.toString()));
+        String new_access_token = JWTUtils.sign(userId);
         stringRedisTemplate.opsForValue().set(userId.toString(), new_access_token,1L, TimeUnit.HOURS);
         JSONObject refreshToken_date = new JSONObject();
         refreshToken_date.put("new_access_token", new_access_token);

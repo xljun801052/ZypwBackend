@@ -1,7 +1,6 @@
 package com.xlys.zypwhomepage.service.impl;
 
 import com.xlys.zypwhomepage.domain.Article;
-import com.xlys.zypwhomepage.domain.Comment;
 import com.xlys.zypwhomepage.mapper.ArticleMapper;
 import com.xlys.zypwhomepage.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,4 @@ public class ArticleServiceImpl implements ArticleService {
         return commentList;
     }
 
-    @Override
-    public List<Comment> getSubCommentsByCommentId(Integer cid) {
-        List<Comment> subCommentList = articleMapper.getSubCommentsByCommentId(cid);
-        return subCommentList;
-    }
 }

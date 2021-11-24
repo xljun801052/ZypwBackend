@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlys.zypwhomepage.mapper.CommentMapper">
+
+    <resultMap id="comment" type="com.xlys.zypwhomepage.domain.Comment">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="opus_id" jdbcType="INTEGER" property="opusId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="img_links" jdbcType="VARCHAR" property="imgLinks"/>
+        <result column="comment_owner" jdbcType="INTEGER" property="commentOwner"/>
+        <result column="anonymous_flag" jdbcType="INTEGER" property="anonymousFlag"/>
+        <result column="favorite_count" jdbcType="INTEGER" property="#{favoriteCount}"/>
+        <result column="reply_count" jdbcType="INTEGER" property="replyCount"/>
+        <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <insert id="addNewComment" parameterType="com.xlys.zypwhomepage.domain.Comment">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into
+        t_homepage_comment (
+        id,
+        opus_id,
+        parent_id,
+        content,
+        img_links,
+        comment_owner,
+        anonymous_flag,
+        favorite_count,
+        reply_count,
+        comment_time,
+        modify_time
+        )
+        values
+        (
+        null,
+        #{opusId},
+        #{parentId},
+        #{content},
+        #{imgLinks},
+        #{commentOwner},
+        #{anonymousFlag},
+        #{favoriteCount},
+        #{replyCount},
+        #{commentTime},
+        #{modifyTime})
+    </insert>
+
+    <!--get sub comments info-->
+    <select id="getSubCommentsByCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select
+            distinct t1.*,
+                     if(
+                                 t2.valid_flag = 0,
+                                 0,
+                                 1
+                         ) as "isCurrentUserFavorite"
+        from
+            (
+                select
+                    thc.id as "id",
+                    tsu.avatar as "userAvatar",
+                    tsu.user_account as "username",
+                    thc.content as "commentContent",
+                    thc.comment_time as "commentTime",
+                    thc.favorite_count as "commentFavoriteCount"
+                from
+                    t_homepage_comment thc
+                        left join t_sys_user tsu on thc.comment_owner = tsu.user_id
+                        and tsu.alive_flag = 0
+                where
+                    thc.parent_id = #{cid}) t1
+                left join t_homepage_favorite t2 on t1.id = t2.comment_id
+                and t2.user_id = #{userId}
+    </select>
+
+    <delete id="deleteCommentByCid" parameterType="java.lang.Integer">
+        delete
+        from t_homepage_comment thc
+        where id = #{cid}
+    </delete>
+
+</mapper>

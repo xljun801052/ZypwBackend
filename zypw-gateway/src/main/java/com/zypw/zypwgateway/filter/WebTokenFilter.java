@@ -40,20 +40,19 @@ public class WebTokenFilter implements WebFilter {
     private static final String TOKEN_NAME = "access_token";
 
 
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String access_token = resolveToken(exchange.getRequest());
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
         serverHttpResponse.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-        if (null!=access_token) {
+        if (null != access_token) {
             // the token is not null, we verify it by JWTUtils.
-            Long userId = JWTUtils.verify(access_token);
-            if (userId != null) {
+            Integer userId = JWTUtils.verify(access_token);
+            if (userId != null && Integer.signum(userId) == 1) {
 //                if (null==stringRedisTemplate) {
 //                    stringRedisTemplate = exchange.getApplicationContext().getBean(StringRedisTemplate.class);
 //                }
-                String cachedAccessToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX+userId);
+                String cachedAccessToken = stringRedisTemplate.opsForValue().get(TOKEN_PREFIX + userId);
                 log.info("cached access_token = " + cachedAccessToken);
                 // token is not in redis, it indicates that the token may expired!
                 if (cachedAccessToken == null) {

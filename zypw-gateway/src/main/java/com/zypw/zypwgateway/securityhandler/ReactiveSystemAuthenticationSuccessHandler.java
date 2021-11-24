@@ -51,10 +51,10 @@ public class ReactiveSystemAuthenticationSuccessHandler implements ServerAuthent
             // Note: the sensitive info can not be passed to user! use the objectMapper to serialize it!
             if (authentication.getPrincipal() instanceof AuthUser) {
                 AuthUser user = (AuthUser) authentication.getPrincipal();
-                String access_token = JWTUtils.sign(Long.parseLong(user.getId().toString()));
+                String access_token = JWTUtils.sign(user.getId());
                 if (access_token!=null) {
 
-                    stringRedisTemplate.opsForValue().set(TOKEN_PREFIX+user.getId(), access_token, 1L, TimeUnit.HOURS);
+                    stringRedisTemplate.opsForValue().set(TOKEN_PREFIX+user.getId(), access_token, 10L, TimeUnit.DAYS);
                     log.info("access_token info：[userId:" + user.getId() + "  <--->  token:" + access_token);
                     stringRedisTemplate.opsForValue().set(user.getId() + "_refresh_token", access_token + REFRESH_TOKEN, 15L, TimeUnit.DAYS);
                     Map<String, Object> token_info = new HashMap<String, Object>();
