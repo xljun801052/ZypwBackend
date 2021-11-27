@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -25,7 +27,7 @@ public class CommentController {
     private CommentService commentService;
 
     /**
-     * get sub comments info by parent commentId
+     * get sub comments info by top layer parent commentId。
      */
     @PostMapping("/subComments")
     public String getSubCommentsByCommentId(@RequestBody JSONObject jsonObject) {
@@ -35,6 +37,15 @@ public class CommentController {
         return JSONObject.toJSONString(subCommentList, SerializerFeature.WriteNullNumberAsZero);
     }
 
+
+    @PostMapping("allLayerSubComments")
+    // TODO: 2021/11/27 RequestParam请求参数解析的流程？为啥用@RequestParam就不可以了？
+    public AxiosResult getAllSubCommentsRecursivelyBySubCommentId(@RequestBody JSONObject jsonObject) {
+        Integer scid = Integer.parseInt(jsonObject.get("scid").toString());
+        List<Map<String,Object>> allLayerSubComments = commentService.getAllSubCommentsRecursivelyBySubCommentId(scid);
+        return new AxiosResult(200,"success",JSONObject.toJSONString(allLayerSubComments, SerializerFeature.WriteNullNumberAsZero));
+    }
+
     /**
      * add a new comment
      */
@@ -42,9 +53,11 @@ public class CommentController {
     @PostMapping("/add")
     public AxiosResult addNewComment(@RequestBody JSONObject jsonObject) {
         Comment comment = mapper.readValue(jsonObject.toJSONString(), Comment.class);
-        Integer result = commentService.addNewComment(comment);
-        String message = Integer.signum(result)==1?"success":"error";
-        return new AxiosResult(200, message);
+        Integer commentId = commentService.addNewComment(comment);
+        String message = Integer.signum(commentId)==1?"success":"error";
+        return new AxiosResult(200, message,new JSONObject(new HashMap<String,Object>(){{
+            put("commentId",commentId);
+        }}));
     }
 
     @PostMapping("/delete/{cid}")

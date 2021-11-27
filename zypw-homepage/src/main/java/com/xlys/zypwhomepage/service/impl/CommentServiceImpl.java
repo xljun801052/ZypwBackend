@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -36,5 +37,10 @@ public class CommentServiceImpl implements CommentService {
         Integer result = commentMapper.deleteCommentByCid(cid);
         log.info("delete comment done! Affected rows:[{}]", result);
         return result;
+    }
+
+    @Override
+    public List<Map<String,Object>> getAllSubCommentsRecursivelyBySubCommentId(Integer scid) {
+        return commentMapper.getAllSubCommentsRecursivelyBySubCommentId(scid);
     }
 }

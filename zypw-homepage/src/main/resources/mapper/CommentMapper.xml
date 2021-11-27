@@ -50,6 +50,7 @@
     </insert>
 
     <!--get sub comments info-->
+    <!-- get the subComments recursively-->
     <select id="getSubCommentsByCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
         select
             distinct t1.*,
@@ -82,5 +83,70 @@
         from t_homepage_comment thc
         where id = #{cid}
     </delete>
+
+    <select id="getAllSubCommentsRecursivelyBySubCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
+        with recursive comment_tree as (
+            select
+                id,
+                opus_id,
+                parent_id,
+                content,
+                img_links,
+                comment_owner,
+                anonymous_flag,
+                favorite_count,
+                reply_count,
+                comment_time,
+                modify_time
+            from
+                t_homepage_comment thc
+            where
+                id = #{scid}
+            union
+                all
+            select
+                thc2.id,
+                thc2.opus_id,
+                thc2.parent_id,
+                thc2.content,
+                thc2.img_links,
+                thc2.comment_owner,
+                thc2.anonymous_flag,
+                thc2.favorite_count,
+                thc2.reply_count,
+                thc2.comment_time,
+                thc2.modify_time
+            from
+                comment_tree ct
+                    join t_homepage_comment thc2 on ct.id = thc2.parent_id
+        )
+        select
+            ct.id as id,
+            ct.opus_id as opusId,
+            ct.parent_id as parentId,
+            ct.content as content,
+            ct.img_links as imgLinks,
+            ct.comment_owner as commentOwner,
+            ct.anonymous_flag as anonymousFlag,
+            ct.favorite_count as favoriteCount,
+            ct.reply_count as replyCount,
+            ct.comment_time as commentTime,
+            ct.modify_time as modifyTime,
+            tsu.user_id as userId,
+            tsu.user_name as userName,
+            tsu.avatar as avatar,
+            if(
+                thf.valid_flag = 0,
+                0,
+                1
+            ) as isCurrentUserFavorite
+        from
+            comment_tree ct
+            left join t_sys_user tsu
+                on ct .comment_owner=tsu.user_id
+            left join t_homepage_favorite thf
+                on ct.id = thf.comment_id  and thf.user_id = tsu.user_id
+        order by comment_time desc
+    </select>
 
 </mapper>
