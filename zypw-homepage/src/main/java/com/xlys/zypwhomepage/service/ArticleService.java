@@ -12,4 +12,7 @@ public interface ArticleService {
 
     List<HashMap<String, Object>> getAllArticleComments(Integer id,Integer userId);
 
+    List<Article> getCurrentPageArticlesAndTotalCount(Integer pageSize, Integer currentPage);
+
+    Integer getTotalArticleCount();
 }

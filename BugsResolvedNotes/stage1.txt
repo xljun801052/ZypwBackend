@@ -2,4 +2,5 @@ Q001：使用@Autowired/@Resource在一个非Spring的component中注入StringRe
     https://stackoverflow.com/questions/32494398/unable-to-autowire-the-service-inside-my-authentication-filter-in-spring?answertab=votes#tab-top
     这里我用二次赋值解决了。因为ServerWebExchange携带了IOC容器~我就直接那了。但是这样一个会不会太重量级了，二个，这个redis模板为null到底是什么原因导致的？加载顺序？还是filter本身的问题？
 
-Q002:
+Q002:有时候homepage主页请求会产生：org.springframework.data.redis.RedisSystemException: Redis exception; nested exception is io.lettuce.core.RedisException: 、
+    java.io.IOException: 你的主机中的软件中止了一个已建立的连接。WebTokenFilter.java(:55)导致前端请求失败。

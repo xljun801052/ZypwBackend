@@ -4,7 +4,7 @@ package com.zypw.zypwcommon.entity.responseEntity;
  * */
 public enum ResponseResult {
 
-    SUCCESS(0,"OK!"),
+    SUCCESS(200,"success"),
     FAIL(1,"Fail!"),
     LOGIN_ERROR(300,"登录出错!"),
     TOKEN_INVALLID(211,"非法token!"),

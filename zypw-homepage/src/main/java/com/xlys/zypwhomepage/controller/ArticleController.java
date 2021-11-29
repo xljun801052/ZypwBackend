@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.xlys.zypwhomepage.domain.Article;
 import com.xlys.zypwhomepage.service.ArticleService;
+import com.zypw.zypwcommon.entity.responseEntity.AxiosResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +48,25 @@ public class ArticleController {
      */
     @PostMapping("/detail/all")
     public String getAllArticleDetail() {
-        List<Article> articleList = articleService.getAllArticleDetail();
-        return JSONObject.toJSONString(articleList, SerializerFeature.WriteNullNumberAsZero);
+        List<Article> articles = articleService.getAllArticleDetail();
+        return JSONObject.toJSONString(articles, SerializerFeature.WriteNullNumberAsZero);
+    }
+
+    @PostMapping("/detail/more")
+    public AxiosResult getCurrentPageArticles(@RequestBody JSONObject params) {
+        Integer pageSize = (Integer) params.get("pageSize");
+        Integer currentPage = (Integer) params.get("currentPage") == 0 ? 1 : (Integer) params.get("currentPage");
+        List<Article> articles = articleService.getCurrentPageArticlesAndTotalCount(pageSize, currentPage);
+        Integer totalArticleCount = getTotalArticleCount();
+        JSONObject data = new JSONObject(new HashMap<String, Object>() {{
+            put("articles", articles);
+            put("total", totalArticleCount);
+        }});
+        return new AxiosResult(200, "success", JSONObject.toJSONString(data, SerializerFeature.WriteNullNumberAsZero));
+    }
+
+    private Integer getTotalArticleCount() {
+        return articleService.getTotalArticleCount();
     }
 
     /**
@@ -57,11 +75,9 @@ public class ArticleController {
     @RequestMapping("/comments/{id}")
     public String getAllArticleComments(@PathVariable("id") Integer id, @RequestBody JSONObject jsonObject) {
         Integer userId = (Integer) jsonObject.get("userId");
-        List<HashMap<String, Object>> commentList = articleService.getAllArticleComments(id, userId);
-        return JSONObject.toJSONString(commentList, SerializerFeature.WriteNullNumberAsZero);
+        List<HashMap<String, Object>> comments = articleService.getAllArticleComments(id, userId);
+        return JSONObject.toJSONString(comments, SerializerFeature.WriteNullNumberAsZero);
     }
-
-
 
 
 }

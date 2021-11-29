@@ -6,6 +6,7 @@ import com.xlys.zypwhomepage.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,9 +29,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<HashMap<String, Object>> getAllArticleComments(Integer aid,Integer userId) {
-        List<HashMap<String, Object>> commentList = articleMapper.getAllArticleComments(aid,userId);
+    public List<HashMap<String, Object>> getAllArticleComments(Integer aid, Integer userId) {
+        List<HashMap<String, Object>> commentList = articleMapper.getAllArticleComments(aid, userId);
         return commentList;
+    }
+
+    @Override
+    public List<Article> getCurrentPageArticlesAndTotalCount(Integer pageSize, Integer currentPage) {
+        List<Article> articles = articleMapper.getCurrentPageArticlesAndTotalCount(pageSize, (currentPage - 1) * pageSize);
+        if (articles == null) {
+            return Collections.emptyList();
+        }
+        return articles;
+    }
+
+    @Override
+    public Integer getTotalArticleCount() {
+        return articleMapper.getTotalArticleCount();
     }
 
 }

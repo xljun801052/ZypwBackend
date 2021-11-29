@@ -40,5 +40,25 @@
         order by t1.commentTime desc
     </select>
 
+    <select id="getCurrentPageArticlesAndTotalCount" parameterType="java.util.Map" resultType="com.xlys.zypwhomepage.domain.Article">
+        select * from t_homepage_article  left join t_sys_config tsc limit #{startIndex},#{pageSize}
+
+
+        select
+            tha.id as id,
+            tha.title as title,
+            tha.read_times as readTimes,
+            tha.collect_times as collectTimes,
+            tha.content as content,
+            (select tsc.desc_ch from t_sys_config tsc where tsc.category='article_category' and tsc.full_value =tha.category) as category,
+            (select group_concat(tsc.desc_ch separator ', ') from t_sys_config tsc where tsc.category='article_tag' and tsc.full_value in ($P!{tha.tags})) as tags,
+            tha.release_time as releaseTime
+        from t_homepage_article tha limit 1,3
+    </select>
+
+    <select id="getTotalArticleCount" resultType="java.lang.Integer">
+        select count(1) from t_homepage_article
+    </select>
+
 
 </mapper>

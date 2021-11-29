@@ -16,4 +16,8 @@ public interface ArticleMapper {
     List<HashMap<String, Object>> getAllArticleComments(Integer aid,Integer userId);
 
     List<Comment> getSubCommentsByCommentId(Integer cid);
+
+    List<Article> getCurrentPageArticlesAndTotalCount(Integer pageSize, Integer startIndex);
+
+    Integer getTotalArticleCount();
 }
