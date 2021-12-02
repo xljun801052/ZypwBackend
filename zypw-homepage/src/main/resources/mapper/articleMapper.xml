@@ -11,53 +11,83 @@
     </resultMap>
 
     <select id="getArticleDetailInfoById" resultType="com.xlys.zypwhomepage.domain.Article">
-        select * from t_homepage_article where id = #{aid}
+        select
+               tha.id,
+               tha.title,
+               tha.collect_times,
+               tha.content,
+               tha.read_times,
+               (
+                    select
+                        tsc.desc_ch
+                    from
+                        t_sys_config tsc
+                    where
+                        tsc.category = 'article_category' and tsc.full_value = tha.category) as category,
+               (
+                   select
+                       group_concat(tsc.desc_ch separator ', ')
+                   from
+                       t_sys_config tsc
+                   where
+                       tsc.category = 'article_tag' and tsc.full_value in (
+                       select
+                           substring_index(substring_index(tha.tags , ',', ht.help_topic_id + 1), ',',-1) as num
+                       from
+                           mysql.help_topic ht
+                       where
+                        <![CDATA[ht.help_topic_id<length(tha.tags)-length(replace(tha.tags, ',', ''))+1]]>
+                   )) as tags,
+               tha.release_time as releaseTime
+        from t_homepage_article tha
+        where id = #{aid}
     </select>
 
     <!--查询所有文章数据-->
     <select id="getAllArticleDetail" resultType="com.xlys.zypwhomepage.domain.Article">
-        select * from t_homepage_article where 1=1
+        select *
+        from t_homepage_article
+        where 1 = 1
     </select>
 
-    <!--查询文章所有评论数据-->
-    <select id="getAllArticleComments" resultType="java.util.Map">
-        select distinct t1.*, if(t2.valid_flag = 0, 0, 1) as "isCurrentUserFavorite"
-          from (select thc.id             as "id",
-                       tsu.avatar         as "userAvatar",
-                       tsu.user_account   as "username",
-                       thc.content        as "commentContent",
-                       thc.comment_time   as "commentTime",
-                       thc.favorite_count as "commentFavoriteCount",
-                       thc.reply_count    as "commentReplyCount"
-                  from t_homepage_comment thc
-                  left join t_sys_user tsu
-                    on thc.comment_owner = tsu.user_id
-                   and tsu.alive_flag = 0
-                 where thc.opus_id = #{aid}) t1
-          left join t_homepage_favorite t2
-            on t1.id = t2.comment_id
-           and t2.user_id = #{userId}
-        order by t1.commentTime desc
-    </select>
-
-    <select id="getCurrentPageArticlesAndTotalCount" parameterType="java.util.Map" resultType="com.xlys.zypwhomepage.domain.Article">
-        select * from t_homepage_article  left join t_sys_config tsc limit #{startIndex},#{pageSize}
-
-
+    <select id="getCurrentPageArticlesAndTotalCount" parameterType="java.util.Map"
+            resultType="com.xlys.zypwhomepage.domain.Article">
         select
-            tha.id as id,
-            tha.title as title,
-            tha.read_times as readTimes,
-            tha.collect_times as collectTimes,
-            tha.content as content,
-            (select tsc.desc_ch from t_sys_config tsc where tsc.category='article_category' and tsc.full_value =tha.category) as category,
-            (select group_concat(tsc.desc_ch separator ', ') from t_sys_config tsc where tsc.category='article_tag' and tsc.full_value in ($P!{tha.tags})) as tags,
-            tha.release_time as releaseTime
-        from t_homepage_article tha limit 1,3
+        tha.id as id,
+        tha.title as title,
+        tha.read_times as readTimes,
+        tha.collect_times as collectTimes,
+        tha.content as content,
+        (
+            select
+                tsc.desc_ch
+            from
+                t_sys_config tsc
+            where
+                tsc.category = 'article_category' and tsc.full_value = tha.category) as category,
+        (
+            select
+                group_concat(tsc.desc_ch separator ', ')
+            from
+                t_sys_config tsc
+            where
+                tsc.category = 'article_tag' and tsc.full_value in (
+                    select
+                        substring_index(substring_index(tha.tags , ',', ht.help_topic_id + 1), ',',-1) as num
+                    from
+                        mysql.help_topic ht
+                    where
+                        <![CDATA[ht.help_topic_id<length(tha.tags)-length(replace(tha.tags, ',', ''))+1]]>
+            )) as tags,
+        tha.release_time as releaseTime
+        from
+            t_homepage_article tha
+        limit #{startIndex}, #{pageSize}
     </select>
 
     <select id="getTotalArticleCount" resultType="java.lang.Integer">
-        select count(1) from t_homepage_article
+        select count(1)
+        from t_homepage_article
     </select>
 
 

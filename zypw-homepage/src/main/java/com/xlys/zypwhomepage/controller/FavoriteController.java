@@ -20,17 +20,14 @@ public class FavoriteController {
     private FavoriteService favoriteService;
 
     /**
-     * 点赞状态变更
+     * 评论点赞
      */
-    @RequestMapping("/change")
-    public String changeFavorite(@RequestBody JSONObject jsonObject) {
-        String commentId = (String) jsonObject.get("cid");
+    @RequestMapping("/comment-star/act")
+    public AxiosResult performStarCommentAct(@RequestBody JSONObject jsonObject) {
+        Integer commentId = (Integer) jsonObject.get("cId");
         Integer userId = (Integer) jsonObject.get("userId");
-        Boolean changeResult = favoriteService.changeFavorite(commentId, userId);
-        if (changeResult) {
-            return JSONObject.toJSONString(new AxiosResult(200, "点赞状态变成成功", changeResult));
-        } else {
-            return JSONObject.toJSONString(new AxiosResult(500, "点赞状态变成失败", changeResult));
-        }
+        boolean favorited = (boolean) jsonObject.get("favoriteStatus");
+        Boolean changeResult = favoriteService.changeStarStatus(commentId, userId, favorited);
+        return new AxiosResult(200, "success", JSONObject.toJSONString(changeResult));
     }
 }

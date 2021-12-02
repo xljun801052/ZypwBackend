@@ -28,7 +28,8 @@ A Promise for My Baby--author:xlys
 日志收集：***logback***  
 后台业务层开发框架选型：***SpringBoot(spring5)*** + ***Mybatis[+SpringDataJpa]*** + ***HikariCP***  
 消息中间件：***RabbitMQ[~~Kafka备用~~]***  
-缓存技术选型：***Redis***  
+缓存技术选型：***Redis + SpringCache***  
+Schedule选型：***SpringBoot@Scheduling + xxl-job***  
 存储层技术选型：***mysql*** + ***FastDFS[~~MogileFS备用~~]***  
 内容搜索引擎与搜索可视化：***ElasticSearch*** + ***Logstash*** + ***Kibana***  
 自动化测试与集成服务部署和弹性伸缩: ***Jenkins*** + ***Docker***  

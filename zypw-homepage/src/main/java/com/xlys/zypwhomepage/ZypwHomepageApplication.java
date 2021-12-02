@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 // to forbidden spring-security functionality. The feature has already been in gateway!
 @SpringBootApplication(
@@ -12,6 +13,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
                 org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class
         })
 @EnableDiscoveryClient
+@EnableScheduling
 @MapperScan("com.xlys.zypwhomepage.mapper")
 public class ZypwHomepageApplication {
 

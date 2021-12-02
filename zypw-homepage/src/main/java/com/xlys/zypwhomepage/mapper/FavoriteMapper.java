@@ -6,7 +6,9 @@ import java.util.Map;
 
 @Repository
 public interface FavoriteMapper {
-    Map<String, String> selectFavoriteStatus(String commentId, Integer userId);
+    Map<String, Integer> selectFavoriteStatus(Integer commentId, Integer userId);
 
-    void changeFavorite(String commentId, Integer userId);
+    void changeFavorite(Integer commentId, Integer userId, boolean favoriteStatus);
+
+    Integer addNewFavorite(Integer commentId, Integer userId);
 }

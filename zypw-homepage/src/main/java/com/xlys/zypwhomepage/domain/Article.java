@@ -1,5 +1,7 @@
 package com.xlys.zypwhomepage.domain;
 
+import java.time.LocalDateTime;
+
 public class Article {
 
     // 文章ID
@@ -17,15 +19,27 @@ public class Article {
     // 文章内容，数据库为longtext类型
     private String content;
 
+    // category
+    private String category;
+
+    // tags
+    private String tags;
+
+    // releaseTime
+    private LocalDateTime releaseTime;
+
     public Article() {
     }
 
-    public Article(Integer id, String title, Integer readTimes, Integer collectTimes, String content) {
+    public Article(Integer id, String title, Integer readTimes, Integer collectTimes, String content, String category, String tags, LocalDateTime releaseTime) {
         this.id = id;
         this.title = title;
         this.readTimes = readTimes;
         this.collectTimes = collectTimes;
         this.content = content;
+        this.category = category;
+        this.tags = tags;
+        this.releaseTime = releaseTime;
     }
 
     public Integer getId() {
@@ -68,6 +82,30 @@ public class Article {
         this.content = content;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public LocalDateTime getReleaseTime() {
+        return releaseTime;
+    }
+
+    public void setReleaseTime(LocalDateTime releaseTime) {
+        this.releaseTime = releaseTime;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -76,6 +114,9 @@ public class Article {
                 ", readTimes=" + readTimes +
                 ", collectTimes=" + collectTimes +
                 ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", tags='" + tags + '\'' +
+                ", releaseTime=" + releaseTime +
                 '}';
     }
 }

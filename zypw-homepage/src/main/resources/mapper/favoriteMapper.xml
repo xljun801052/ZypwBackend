@@ -2,28 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xlys.zypwhomepage.mapper.FavoriteMapper">
 
-    <!--查询点赞记录-->
+    <!--query the favorite record status-->
     <select id="selectFavoriteStatus" parameterType="java.lang.Integer" resultType="java.util.HashMap">
-        select user_id,comment_id,valid_flag from t_homepage_favorite where comment_id = #{commentId} and user_id= #{userId}
+        select user_id as userId,comment_id as commmentId,valid_flag as validFlag from t_homepage_favorite where comment_id = #{commentId} and user_id= #{userId}
     </select>
 
-    <!--修改点赞状态-->
+    <!--change the favorite record status-->
     <update id="changeFavorite" parameterType="java.lang.Integer">
         update t_homepage_favorite set
-        <if test="favoriteStatus!=null">
-            <if test="favoriteStatus == 1">
-                valid_flag = 0
-            </if>
-            <if test="favoriteStatus == 0">
+            <if test="favoriteStatus == false">
                 valid_flag = 1
             </if>
-        </if>
+            <if test="favoriteStatus == true">
+                valid_flag = 0
+            </if>
         where user_id=#{userId} and comment_id=#{commentId}
     </update>
 
-    <!--新增点赞记录-->
+    <!--add new favorite record-->
     <insert id="addNewFavorite" parameterType="java.lang.Integer">
-        insert into t_hoempage_favorite values (
+        insert into t_homepage_favorite values (
             comment_id = #{commentId},
             user_id = #{userId},
             valid_flag= 0,

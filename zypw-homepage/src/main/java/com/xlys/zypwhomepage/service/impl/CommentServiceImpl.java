@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Resource
     private CommentMapper commentMapper;
+
+    @Override
+    public List<HashMap<String, Object>> getAllArticleComments(Integer aid, Integer userId) {
+        List<HashMap<String, Object>> commentList = commentMapper.getAllArticleComments(aid, userId);
+        return commentList;
+    }
 
     @Override
     @Transactional

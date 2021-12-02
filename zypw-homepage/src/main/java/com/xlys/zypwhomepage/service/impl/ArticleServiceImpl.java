@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -26,12 +25,6 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getAllArticleDetail() {
         List<Article> articleList = articleMapper.getAllArticleDetail();
         return articleList;
-    }
-
-    @Override
-    public List<HashMap<String, Object>> getAllArticleComments(Integer aid, Integer userId) {
-        List<HashMap<String, Object>> commentList = articleMapper.getAllArticleComments(aid, userId);
-        return commentList;
     }
 
     @Override

@@ -34,13 +34,13 @@ public class ArticleController {
     /**
      * 获取单个文章详情
      */
-    @RequestMapping("/detail/{aid}")
-    public String getArticleDetail(@PathVariable("aid") Integer aid, @RequestBody JSONObject jsonObject) {
+    @RequestMapping("/detail")
+    public AxiosResult getArticleDetail(@RequestBody JSONObject jsonObject) {
         Integer userId = (Integer) jsonObject.get("userId");
+        Integer aid = (Integer) jsonObject.get("aId");
         System.out.println("文章aid = " + aid);
         Article article = articleService.getArticleDetailInfoById(aid, userId);
-        String jsonString = JSONObject.toJSONString(article, SerializerFeature.WriteNullNumberAsZero);
-        return jsonString;
+        return new AxiosResult(200, "success", JSONObject.toJSONString(article, SerializerFeature.WriteNullNumberAsZero));
     }
 
     /**
@@ -68,16 +68,5 @@ public class ArticleController {
     private Integer getTotalArticleCount() {
         return articleService.getTotalArticleCount();
     }
-
-    /**
-     * 获取所有文章评论详情
-     */
-    @RequestMapping("/comments/{id}")
-    public String getAllArticleComments(@PathVariable("id") Integer id, @RequestBody JSONObject jsonObject) {
-        Integer userId = (Integer) jsonObject.get("userId");
-        List<HashMap<String, Object>> comments = articleService.getAllArticleComments(id, userId);
-        return JSONObject.toJSONString(comments, SerializerFeature.WriteNullNumberAsZero);
-    }
-
 
 }
