@@ -25,8 +25,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     public Boolean changeStarStatus(Integer commentId, Integer userId, boolean favorited) {
         boolean performFlag = true;
         try {
+            // TODO: 2021/12/3 how to guarantee the redis execution be atomic?
             if (favorited) {
-                redisTemplate.opsForSet().add(COMMENT_STAR_LIST_CACHE_PREFIX + commentId, userId);
+                redisTemplate.opsForList().leftPush(COMMENT_STAR_LIST_CACHE_PREFIX + commentId, userId);
                 redisTemplate.opsForValue().increment(COMMENT_STAR_COUNT_CACHE_PREFIX + commentId);
                 log.info("User:[{}] star for comment:[{}] successfully!", userId, commentId);
             } else {
