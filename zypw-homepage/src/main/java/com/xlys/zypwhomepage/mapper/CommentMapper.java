@@ -5,6 +5,7 @@ import com.xlys.zypwhomepage.domain.Comment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface CommentMapper {
 
@@ -17,4 +18,6 @@ public interface CommentMapper {
     Integer deleteCommentByCid(Integer cid);
 
     List<Map<String,Object>> getAllSubCommentsRecursivelyBySubCommentId(Integer scid);
+
+    Set<Integer> getAllValidCommentIds();
 }

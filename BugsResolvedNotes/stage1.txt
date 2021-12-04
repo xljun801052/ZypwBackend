@@ -4,3 +4,21 @@ Q001：使用@Autowired/@Resource在一个非Spring的component中注入StringRe
 
 Q002:有时候homepage主页请求会产生：org.springframework.data.redis.RedisSystemException: Redis exception; nested exception is io.lettuce.core.RedisException: 、
     java.io.IOException: 你的主机中的软件中止了一个已建立的连接。WebTokenFilter.java(:55)导致前端请求失败。
+
+Q003:mybatis批量更新时候报错：说如下语句语法有错误。[本质来说批量更新和批量插入都是用的动态sql的foreach标签功能]
+    set
+    	valid_flag = ?,
+    	modify_time = now()
+    where
+    	comment_id = ?
+    	and user_id =? ;
+
+    update
+    	t_homepage_favorite
+    set
+    	valid_flag = ?,
+    	modify_time = now()
+    where
+    	comment_id = ?
+    	and user_id =?
+    解决：原因是--->mybatis在 *.xml文件内使用了循环，在mybatis中默认是不允许使用批量修改。解决--->在连接mysql的url后面加上&allowMultiQueries=true参数

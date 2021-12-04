@@ -10,10 +10,11 @@
         <result column="img_links" jdbcType="VARCHAR" property="imgLinks"/>
         <result column="comment_owner" jdbcType="INTEGER" property="commentOwner"/>
         <result column="anonymous_flag" jdbcType="INTEGER" property="anonymousFlag"/>
-        <result column="favorite_count" jdbcType="INTEGER" property="#{favoriteCount}"/>
+        <result column="favorite_count" jdbcType="INTEGER" property="favoriteCount"/>
         <result column="reply_count" jdbcType="INTEGER" property="replyCount"/>
         <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime"/>
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="valid_flag" jdbcType="INTEGER" property="validFlag"/>
     </resultMap>
 
     <!--查询文章所有评论数据-->
@@ -40,7 +41,7 @@
                        left join t_sys_user tsu
                                  on thc.comment_owner = tsu.user_id
                                      and tsu.alive_flag = 0
-              where thc.opus_id = #{aid}) t1
+              where thc.opus_id = #{aid} and thc.valid_flag = 0) t1
                  left join t_homepage_favorite t2
                            on t1.id = t2.comment_id and t2.user_id = #{userId}
         order by t1.commentTime desc
@@ -62,7 +63,8 @@
         favorite_count,
         reply_count,
         comment_time,
-        modify_time
+        modify_time,
+        valid_flag
         )
         values
         (
@@ -76,7 +78,8 @@
         #{favoriteCount},
         #{replyCount},
         #{commentTime},
-        #{modifyTime})
+        #{modifyTime},
+        #{validFlag})
     </insert>
 
     <!--get sub comments info-->
@@ -103,16 +106,16 @@
                         left join t_sys_user tsu on thc.comment_owner = tsu.user_id
                         and tsu.alive_flag = 0
                 where
-                    thc.parent_id = #{cid}) t1
+                    thc.parent_id = #{cid}
+                    and thc.valid_flag = 0
+                ) t1
                 left join t_homepage_favorite t2 on t1.id = t2.comment_id
                 and t2.user_id = #{userId}
     </select>
 
-    <delete id="deleteCommentByCid" parameterType="java.lang.Integer">
-        delete
-        from t_homepage_comment thc
-        where id = #{cid}
-    </delete>
+    <update id="deleteCommentByCid" parameterType="java.lang.Integer">
+        update t_homepage_comment set valid_flag = 1 where  id = #{cid}
+    </update>
 
     <select id="getAllSubCommentsRecursivelyBySubCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
         with recursive comment_tree as (
@@ -131,7 +134,7 @@
             from
                 t_homepage_comment thc
             where
-                id = #{scid}
+                thc.id = #{scid} and thc.valid_flag = 0
             union
                 all
             select
@@ -148,7 +151,7 @@
                 thc2.modify_time
             from
                 comment_tree ct
-                    join t_homepage_comment thc2 on ct.id = thc2.parent_id
+                    join t_homepage_comment thc2 on ct.id = thc2.parent_id and thc2.valid_flag = 0
         )
         select
             ct.id as id,
@@ -179,4 +182,9 @@
         order by comment_time desc
     </select>
 
+    <select id="getAllValidCommentIds" resultType="java.lang.Integer">
+        select id as cid
+        from t_homepage_comment
+        where valid_flag = 0
+    </select>
 </mapper>
