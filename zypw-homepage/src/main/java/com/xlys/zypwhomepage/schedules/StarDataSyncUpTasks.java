@@ -31,8 +31,8 @@ public class StarDataSyncUpTasks {
     @Autowired
     private CommentMapper commentMapper;
 
-//    @Scheduled(cron = "0 0 0/2 * * ? ")
-    @Scheduled(cron = "0 20 11 * * ? ")
+    @Scheduled(cron = "0 0 0/2 * * ? ")
+//    @Scheduled(cron = "0 20 11 * * ? ")
     public void syncUpCommentDataFromCache2MySQL() {
         log.info("> > > syncUpCommentDataFromCache2MySQL task execution start!");
         Set<Integer> allCids = commentMapper.getAllValidCommentIds();
@@ -62,9 +62,9 @@ public class StarDataSyncUpTasks {
                         .collect(toSet());
                 for (Map<String, Integer> cStarMap : dbStarInfo) {
                     if (cacheStarInfo.contains(cStarMap.get("userId"))) {
-                        cStarMap.put("favorited", 0);
-                    } else {
                         cStarMap.put("favorited", 1);
+                    } else {
+                        cStarMap.put("favorited", 0);
                     }
                 }
                 if (increasedUserIds.isEmpty()) {

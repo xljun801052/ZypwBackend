@@ -26,7 +26,7 @@ public class FavoriteController {
     public AxiosResult performStarCommentAct(@RequestBody JSONObject jsonObject) {
         Integer commentId = (Integer) jsonObject.get("cId");
         Integer userId = (Integer) jsonObject.get("userId");
-        boolean favorited = (boolean) jsonObject.get("favoriteStatus");
+        boolean favorited = (boolean) jsonObject.get("favorited");
         Boolean changeResult = favoriteService.changeStarStatus(commentId, userId, favorited);
         return new AxiosResult(200, "success", JSONObject.toJSONString(changeResult));
     }

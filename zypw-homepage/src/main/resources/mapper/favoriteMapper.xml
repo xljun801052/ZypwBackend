@@ -14,10 +14,10 @@
     <update id="changeFavorite" parameterType="java.lang.Integer">
         update t_homepage_favorite set
         <if test="favoriteStatus == false">
-            valid_flag = 1
+            valid_flag = 0
         </if>
         <if test="favoriteStatus == true">
-            valid_flag = 0
+            valid_flag = 1
         </if>
         where user_id=#{userId} and comment_id=#{commentId}
     </update>
@@ -27,7 +27,7 @@
         insert into t_homepage_favorite
         values (comment_id = #{commentId},
                 user_id = #{userId},
-                valid_flag = 0,
+                valid_flag = 1,
                 create_time = now(),
                 modify_time = null)
     </insert>
@@ -50,7 +50,7 @@
             (
              #{userId},
              #{cid},
-             0,
+             1,
              now(),
              null
              )

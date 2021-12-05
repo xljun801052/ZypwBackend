@@ -27,7 +27,7 @@
                         t1.commentTime,
                         t1.commentFavoriteCount,
                         t1.commentReplyCount,
-                        if(t2.valid_flag = 0, 0, 1) as "isCurrentUserFavorite",
+                        if(t2.valid_flag = 0 or t2.valid_flag is null, 0, 1) as "isCurrentUserFavorite",
                         if(t1.commentOwner=#{userId},1,0) as "isCurrentUserCommented"
         from (select thc.id             as "id",
                      tsu.avatar         as "userAvatar",
@@ -40,8 +40,8 @@
               from t_homepage_comment thc
                        left join t_sys_user tsu
                                  on thc.comment_owner = tsu.user_id
-                                     and tsu.alive_flag = 0
-              where thc.opus_id = #{aid} and thc.valid_flag = 0) t1
+                                     and tsu.alive_flag = 1
+              where thc.opus_id = #{aid} and thc.valid_flag = 1) t1
                  left join t_homepage_favorite t2
                            on t1.id = t2.comment_id and t2.user_id = #{userId}
         order by t1.commentTime desc
@@ -83,12 +83,12 @@
     </insert>
 
     <!--get sub comments info-->
-    <!-- get the subComments recursively-->
+
     <select id="getSubCommentsByCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
         select
             distinct t1.*,
                      if(
-                                 t2.valid_flag = 0,
+                                 t2.valid_flag = 0 or t2.valid_flag is null,
                                  0,
                                  1
                          ) as "isCurrentUserFavorite"
@@ -104,19 +104,20 @@
                 from
                     t_homepage_comment thc
                         left join t_sys_user tsu on thc.comment_owner = tsu.user_id
-                        and tsu.alive_flag = 0
+                        and tsu.alive_flag = 1
                 where
                     thc.parent_id = #{cid}
-                    and thc.valid_flag = 0
+                    and thc.valid_flag = 1
                 ) t1
                 left join t_homepage_favorite t2 on t1.id = t2.comment_id
                 and t2.user_id = #{userId}
     </select>
 
     <update id="deleteCommentByCid" parameterType="java.lang.Integer">
-        update t_homepage_comment set valid_flag = 1 where  id = #{cid}
+        update t_homepage_comment set valid_flag = 0 where  id = #{cid}
     </update>
 
+    <!-- get the subComments recursively-->
     <select id="getAllSubCommentsRecursivelyBySubCommentId" parameterType="java.lang.Integer" resultType="java.util.Map">
         with recursive comment_tree as (
             select
@@ -134,7 +135,7 @@
             from
                 t_homepage_comment thc
             where
-                thc.id = #{scid} and thc.valid_flag = 0
+                thc.id = #{scid} and thc.valid_flag = 1
             union
                 all
             select
@@ -151,7 +152,7 @@
                 thc2.modify_time
             from
                 comment_tree ct
-                    join t_homepage_comment thc2 on ct.id = thc2.parent_id and thc2.valid_flag = 0
+                    join t_homepage_comment thc2 on ct.id = thc2.parent_id and thc2.valid_flag = 1
         )
         select
             ct.id as id,
@@ -169,7 +170,7 @@
             tsu.user_name as userName,
             tsu.avatar as avatar,
             if(
-                thf.valid_flag = 0,
+                thf.valid_flag = 0 or thf.valid_flag is null,
                 0,
                 1
             ) as isCurrentUserFavorite
@@ -179,12 +180,13 @@
                 on ct .comment_owner=tsu.user_id
             left join t_homepage_favorite thf
                 on ct.id = thf.comment_id  and thf.user_id = tsu.user_id
+        where ct.id not in (#{scid})
         order by comment_time desc
     </select>
 
     <select id="getAllValidCommentIds" resultType="java.lang.Integer">
         select id as cid
         from t_homepage_comment
-        where valid_flag = 0
+        where valid_flag = 1
     </select>
 </mapper>
