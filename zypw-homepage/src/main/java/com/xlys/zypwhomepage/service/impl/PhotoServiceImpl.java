@@ -26,7 +26,6 @@ public class PhotoServiceImpl implements PhotoService {
     public String uploadFile(MultipartFile file) {
         String imagePath = FastDFSClient.uploadFile(file.getInputStream(), file.getName()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         Photo.PhotoBuilder photoBuilder = Photo.builder();
-        // TODO: 2021/12/13 1.the files should not share the same file name. 2.encoded name should be a little complex.
         Photo photo = photoBuilder
                 .name(file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")))
                 .encodedName(UUID.nameUUIDFromBytes(file.getOriginalFilename().getBytes(StandardCharsets.UTF_8)).toString())
