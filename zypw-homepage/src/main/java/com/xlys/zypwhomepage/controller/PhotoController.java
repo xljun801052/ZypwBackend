@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,10 +52,18 @@ public class PhotoController {
     /**
      * pictures batch upload.
      */
+    @PostMapping("batch/upload")
     public AxiosResult batchUploadPictures(HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        // TODO: 2021/12/13 ...
-        return null;
+        List<String> filePaths = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) {
+                log.info("Empty uploaded file.");
+                return new AxiosResult(200, "success", "");
+            }
+            filePaths.add(photoService.uploadFile(file));
+        }
+        return new AxiosResult(200, "success", filePaths);
     }
 
     /**

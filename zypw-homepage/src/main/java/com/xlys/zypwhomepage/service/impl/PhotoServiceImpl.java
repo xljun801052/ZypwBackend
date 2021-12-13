@@ -5,7 +5,6 @@ import com.xlys.zypwhomepage.domain.Photo;
 import com.xlys.zypwhomepage.mapper.PhotoMapper;
 import com.xlys.zypwhomepage.service.PhotoService;
 import lombok.SneakyThrows;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class PhotoServiceImpl implements PhotoService {
@@ -26,9 +26,10 @@ public class PhotoServiceImpl implements PhotoService {
     public String uploadFile(MultipartFile file) {
         String imagePath = FastDFSClient.uploadFile(file.getInputStream(), file.getName()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         Photo.PhotoBuilder photoBuilder = Photo.builder();
+        // TODO: 2021/12/13 1.the files should not share the same file name. 2.encoded name should be a little complex.
         Photo photo = photoBuilder
-                .name(file.getName())
-                .encodedName(Base64.encodeBase64String(file.getName().getBytes(StandardCharsets.UTF_8)))
+                .name(file.getOriginalFilename().substring(0,file.getOriginalFilename().lastIndexOf(".")))
+                .encodedName(UUID.nameUUIDFromBytes(file.getOriginalFilename().getBytes(StandardCharsets.UTF_8)).toString())
                 .path(imagePath)
                 .extType(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1))
                 .size(file.getSize())
