@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xlys.zypwhomepage.mapper.PhotoMapper">
+
+    <resultMap id="photo" type="com.xlys.zypwhomepage.domain.Photo">
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="encoded_name" jdbcType="VARCHAR" property="encodedName"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="ext_type" jdbcType="VARCHAR" property="extType"/>
+        <result column="size" jdbcType="INTEGER" property="size"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="valid_flag" jdbcType="INTEGER" property="validFlag"/>
+    </resultMap>
+
+    <insert id="saveUploadedFileInfo" parameterType="com.xlys.zypwhomepage.domain.Photo">
+        <selectKey keyProperty="pid" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into
+        t_homepage_photo (
+        pid,
+        name,
+        encoded_name,
+        path,
+        ext_type,
+        size,
+        create_time,
+        valid_flag
+        )
+        values
+        (
+        null,
+        #{name},
+        #{encodedName},
+        #{path},
+        #{extType},
+        #{size},
+        #{createTime},
+        #{validFlag})
+    </insert>
+</mapper>
