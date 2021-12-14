@@ -30,12 +30,12 @@ public class PhotoController {
      * single picture upload
      */
     @PostMapping("/upload")
-    public AxiosResult uploadPicture(@RequestParam("file") MultipartFile file) {
+    public AxiosResult uploadPicture(@RequestParam("userId") Integer userId, @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             log.info("Empty uploaded file.");
             return new AxiosResult(200, "success", "");
         }
-        String imageUrl = photoService.uploadFile(file);
+        String imageUrl = photoService.uploadFile(userId, file);
         return new AxiosResult(200, "success", imageUrl);
     }
 
@@ -53,7 +53,7 @@ public class PhotoController {
      * pictures batch upload.
      */
     @PostMapping("batch/upload")
-    public AxiosResult batchUploadPictures(HttpServletRequest request) {
+    public AxiosResult batchUploadPictures(@RequestParam("userId") Integer userId, HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         List<String> filePaths = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -61,7 +61,7 @@ public class PhotoController {
                 log.info("Empty uploaded file.");
                 return new AxiosResult(200, "success", "");
             }
-            filePaths.add(photoService.uploadFile(file));
+            filePaths.add(photoService.uploadFile(userId, file));
         }
         return new AxiosResult(200, "success", filePaths);
     }

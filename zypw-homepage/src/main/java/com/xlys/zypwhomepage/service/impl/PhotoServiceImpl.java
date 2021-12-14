@@ -23,7 +23,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     @SneakyThrows
     @Override
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(Integer userId,MultipartFile file) {
         String imagePath = FastDFSClient.uploadFile(file.getInputStream(), file.getName()+file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
         Photo.PhotoBuilder photoBuilder = Photo.builder();
         Photo photo = photoBuilder
@@ -34,6 +34,7 @@ public class PhotoServiceImpl implements PhotoService {
                 .size(file.getSize())
                 .createTime(LocalDateTime.now())
                 .validFlag(1)
+                .creator(userId)
                 .build();
        photoMapper.saveUploadedFileInfo(photo);
         if (photo.getPid() > 0) {

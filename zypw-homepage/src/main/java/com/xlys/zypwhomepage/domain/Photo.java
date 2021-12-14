@@ -27,4 +27,6 @@ public class Photo {
     private LocalDateTime createTime;
 
     private Integer validFlag;
+
+    private Integer creator;
 }

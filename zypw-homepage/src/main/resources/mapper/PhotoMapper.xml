@@ -11,6 +11,7 @@
         <result column="size" jdbcType="INTEGER" property="size"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="valid_flag" jdbcType="INTEGER" property="validFlag"/>
+        <result column="creator" jdbcType="INTEGER" property="creator"/>
     </resultMap>
 
     <insert id="saveUploadedFileInfo" parameterType="com.xlys.zypwhomepage.domain.Photo">
@@ -26,7 +27,8 @@
         ext_type,
         size,
         create_time,
-        valid_flag
+        valid_flag,
+        creator
         )
         values
         (
@@ -37,6 +39,7 @@
         #{extType},
         #{size},
         #{createTime},
-        #{validFlag})
+        #{validFlag},
+        #{creator})
     </insert>
 </mapper>
